@@ -1,3 +1,6 @@
+---
+# yamllint disable rule:line-length
+
 name: 'K3S with Calico and Helm 3'
 description: 'Install K3S with Calico network plugin and Helm 3'
 # Copied from

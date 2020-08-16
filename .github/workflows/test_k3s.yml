@@ -1,32 +1,43 @@
+---
 name: Test
 
+# yamllint disable-line rule:truthy
 on:
   - pull_request
   - push
 
 jobs:
+  # https://github.com/pre-commit/action
+  pre-commit:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: pre-commit/action@v2.0.0
+
   test_install_k3s:
     runs-on: ubuntu-latest
     name: Install K3S
     steps:
-    - uses: actions/checkout@v2
-    - id: k3s
-      uses: ./
-      with:
-        k3s-version: v1.18.8+k3s1
-        helm-version: v3.3.0
-    - run: |
-        echo "kubeconfig: ${{ steps.k3s.outputs.kubeconfig }}"
-    - run: |
-        kubectl version
-        kubectl get pods --all-namespaces
-        kubectl get deploy --all-namespaces
-      shell: bash
-      env:
-        KUBECONFIG: ${{ steps.k3s.outputs.kubeconfig }}
-    - run: |
-        helm version
-        helm list
-      shell: bash
-      env:
-        KUBECONFIG: ${{ steps.k3s.outputs.kubeconfig }}
+      - uses: actions/checkout@v2
+      - id: k3s
+        uses: ./
+        with:
+          k3s-version: v1.18.8+k3s1
+          helm-version: v3.3.0
+      - run: |
+          echo "kubeconfig: ${{ steps.k3s.outputs.kubeconfig }}"
+      - run: |
+          kubectl version
+          kubectl get pods --all-namespaces
+          kubectl get deploy --all-namespaces
+        shell: bash
+        env:
+          KUBECONFIG: ${{ steps.k3s.outputs.kubeconfig }}
+      - run: |
+          helm version
+          helm list
+        shell: bash
+        env:
+          KUBECONFIG: ${{ steps.k3s.outputs.kubeconfig }}
