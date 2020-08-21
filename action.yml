@@ -37,6 +37,9 @@ runs:
     #       --disable.
     - name: Setup k3s ${{ inputs.k3s-version }}
       run: |
+        if [[ ${{ inputs.k3s-version }} == v1.16.* ]]; then
+          k3s_disable_command=--no-deploy
+        fi
         curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${{ inputs.k3s-version }} sh -s - \
           --write-kubeconfig-mode=644 \
           "${k3s_disable_command:---disable}" metrics-server \
