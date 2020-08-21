@@ -6,6 +6,7 @@ description: 'Install K3S with Calico network plugin and Helm 3'
 # Copied from
 # https://github.com/jupyterhub/zero-to-jupyterhub-k8s/blob/08c13609c1d0c6cb07d45d49d0a876100cf941eb/ci/common
 # Thanks @consideratio !
+
 inputs:
   k3s-version:
     description: K3S version (https://github.com/rancher/k3s/releases)
@@ -19,6 +20,7 @@ outputs:
   kubeconfig:
     description: Path to kubeconfig file
     value: /etc/rancher/k3s/k3s.yaml
+
 runs:
   using: "composite"
   steps:
@@ -33,8 +35,8 @@ runs:
     #
     # NOTE: k3s 1.16 and older needed a flag named --no-deploy instead of
     #       --disable.
-    - run: |
-        echo "Setup k3s ${{ inputs.k3s-version }}"
+    - name: Setup k3s ${{ inputs.k3s-version }}
+      run: |
         curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${{ inputs.k3s-version }} sh -s - \
           --write-kubeconfig-mode=644 \
           "${k3s_disable_command:---disable}" metrics-server \
@@ -54,8 +56,8 @@ runs:
     #
     # ref: https://rancher.com/docs/k3s/latest/en/installation/network-options/
     #
-    - run: |
-        echo "Setup calico"
+    - name: Setup calico
+      run: |
         curl -sfL https://docs.projectcalico.org/v3.14/manifests/calico.yaml \
           | sed '/"type": "calico"/a\
             "container_settings": {\
@@ -66,22 +68,22 @@ runs:
       env:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
-    - run: |
-        echo "Wait for calico"
+    - name: Wait for calico
+      run: |
         kubectl rollout status --watch --timeout 300s daemonset/calico-node -n kube-system \
-          && kubectl rollout status --watch --timeout 300s deployment/calico-kube-controllers -n kube-system \
+          && kubectl rollout status --watch --timeout 300s deployment/calico-kube-controllers -n kube-system
       shell: bash
       env:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
-    - run: |
-        echo "Wait for coredns"
+    - name: Wait for coredns
+      run: |
         kubectl rollout status --watch --timeout 300s deployment/coredns -n kube-system
       shell: bash
       env:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
-    - run: |
-        echo "Setup Helm ${{ inputs.helm-version }}"
+    - name: Setup Helm ${{ inputs.helm-version }}
+      run: |
         curl -sf https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION=${{ inputs.helm-version }} bash
       shell: bash
