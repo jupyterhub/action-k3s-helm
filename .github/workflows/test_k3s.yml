@@ -18,14 +18,23 @@ jobs:
 
   test_install_k3s:
     runs-on: ubuntu-latest
-    name: Install K3S
+    name: Test K3s and Helm
+    strategy:
+      matrix:
+        include:
+          - k3s: v1.18.8+k3s1
+            helm: v3.3.0
+          - k3s: v1.17.11+k3s1
+            helm: v3.2.4
+          - k3s: v1.16.14+k3s1
+            helm: v3.1.3
     steps:
       - uses: actions/checkout@v2
       - id: k3s
         uses: ./
         with:
-          k3s-version: v1.18.8+k3s1
-          helm-version: v3.3.0
+          k3s-version: ${{ matrix.k3s }}
+          helm-version: ${{ matrix.helm }}
 
       - name: Kubectl
         run: |
