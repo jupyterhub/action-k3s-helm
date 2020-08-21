@@ -1,0 +1,41 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "test-calico-test-allowed"
+  labels:
+    app.kubernetes.io/name: test-calico
+    test-calico-access: allowed
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['-T5', 'test-calico:80']
+  restartPolicy: Never
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "test-calico-test-blocked"
+  labels:
+    app.kubernetes.io/name: test-calico
+    test-calico-access: blocked
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['sh']
+      args: [
+        '-c',
+        'if wget -T5 test-calico:80; then
+           echo FAIL: should be blocked;
+           exit 1;
+         fi'
+      ]
+  restartPolicy: Never
