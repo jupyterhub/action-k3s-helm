@@ -1,8 +1,15 @@
 ---
 # yamllint disable rule:line-length
 
-name: 'K3S with Calico and Helm 3'
-description: 'Install K3S with Calico network plugin and Helm 3'
+name: K3S with Calico and Helm
+description: |
+  Install Kubernetes (K3S) and Helm 3.
+  Includes Calico network plugin for network policy support.
+
+branding:
+  icon: server
+  color: purple
+
 # Copied from
 # https://github.com/jupyterhub/zero-to-jupyterhub-k8s/blob/08c13609c1d0c6cb07d45d49d0a876100cf941eb/ci/common
 # Thanks @consideratio !
