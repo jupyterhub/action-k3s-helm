@@ -90,3 +90,7 @@ runs:
       run: |
         curl -sf https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION=${{ inputs.helm-version }} bash
       shell: bash
+
+    - name: Export KUBECONFIG environment variable
+      run: echo "::set-env name=KUBECONFIG::/etc/rancher/k3s/k3s.yaml"
+      shell: bash

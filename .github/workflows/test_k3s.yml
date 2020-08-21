@@ -35,6 +35,7 @@ jobs:
         with:
           k3s-version: ${{ matrix.k3s }}
           helm-version: ${{ matrix.helm }}
+      # This action should export KUBECONFIG
 
       - name: Kubectl
         run: |
@@ -42,25 +43,17 @@ jobs:
           kubectl get pods --all-namespaces
           kubectl get deploy --all-namespaces
         shell: bash
-        env:
-          KUBECONFIG: ${{ steps.k3s.outputs.kubeconfig }}
 
       - name: Helm
         run: |
           helm version
           helm list
         shell: bash
-        env:
-          KUBECONFIG: ${{ steps.k3s.outputs.kubeconfig }}
 
       - name: Install network policies test
         run: helm install test-calico ./test-calico --wait
         shell: bash
-        env:
-          KUBECONFIG: ${{ steps.k3s.outputs.kubeconfig }}
 
       - name: Run network policies test
         run: helm test test-calico --logs
         shell: bash
-        env:
-          KUBECONFIG: ${{ steps.k3s.outputs.kubeconfig }}
