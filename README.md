@@ -1,5 +1,5 @@
 # GitHub Action: Install K3s, Calico and Helm
-[![.github/workflows/test_k3s.yml](https://github.com/manics/action-k3s-helm/workflows/.github/workflows/test_k3s.yml/badge.svg)](https://github.com/manics/action-k3s-helm/actions)
+[![GitHub Action badge](https://github.com/manics/action-k3s-helm/workflows/Test/badge.svg)](https://github.com/manics/action-k3s-helm/actions)
 
 Install K3s with Calico for network policies, and Helm 3.
 
