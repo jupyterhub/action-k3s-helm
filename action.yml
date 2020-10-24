@@ -51,7 +51,6 @@ runs:
           --write-kubeconfig-mode=644 \
           "${k3s_disable_command:---disable}" metrics-server \
           "${k3s_disable_command:---disable}" traefik \
-          "${k3s_disable_command:---disable}" local-storage \
           --disable-network-policy \
           --flannel-backend=none \
           --docker
