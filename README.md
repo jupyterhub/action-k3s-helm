@@ -27,10 +27,10 @@ jobs:
     name: Install K3s
     steps:
       - id: k3s
-        uses: manics/action-k3s-helm@master
+        uses: manics/action-k3s-helm@main
         with:
-          k3s-version: v1.18.8+k3s1
-          helm-version: v3.3.0
+          k3s-version: v1.19.3+k3s1
+          helm-version: v3.3.4
       - run: |
           echo "kubeconfig: $KUBECONFIG"
           kubectl get pods --all-namespaces

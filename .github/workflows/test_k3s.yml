@@ -22,11 +22,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - k3s: v1.18.8+k3s1
-            helm: v3.3.0
-          - k3s: v1.17.11+k3s1
+          - k3s: v1.19.3+k3s1
+            helm: v3.3.4
+          - k3s: v1.18.10+k3s1
+            helm: v3.3.4
+          - k3s: v1.17.13+k3s1
             helm: v3.2.4
-          - k3s: v1.16.14+k3s1
+          - k3s: v1.16.15+k3s1
             helm: v3.1.3
     steps:
       - uses: actions/checkout@v2
@@ -40,8 +42,8 @@ jobs:
       - name: Kubectl
         run: |
           kubectl version
-          kubectl get pods --all-namespaces
-          kubectl get deploy --all-namespaces
+          kubectl get storageclass
+          kubectl get deploy,daemonset,pods --all-namespaces
         shell: bash
 
       - name: Helm
