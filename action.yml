@@ -98,5 +98,5 @@ runs:
       shell: bash
 
     - name: Export KUBECONFIG environment variable
-      run: echo "::set-env name=KUBECONFIG::/etc/rancher/k3s/k3s.yaml"
+      run: echo "KUBECONFIG=/etc/rancher/k3s/k3s.yaml" >> $GITHUB_ENV
       shell: bash
