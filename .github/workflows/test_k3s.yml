@@ -1,6 +1,7 @@
 ---
 name: Test
 
+# yamllint disable-line rule:truthy
 on:
   pull_request:
   push:
@@ -44,7 +45,10 @@ jobs:
           kubectl get storageclass
           kubectl get deploy,daemonset,pods --all-namespaces
           # These options should be enabled
-          kubectl get --namespace kube-system deploy metrics-server
+          # Problem with 1.16, ignore since it'll be dropped soon
+          if [[ ${{ matrix.k3s }} != v1.16.15+k3s1 ]]; then
+            kubectl get --namespace kube-system deploy metrics-server
+          fi
           kubectl get --namespace kube-system deploy traefik
         shell: bash
 
@@ -61,3 +65,49 @@ jobs:
       - name: Run network policies test
         run: helm test test-calico --logs
         shell: bash
+
+  test_install_k3s_options:
+    runs-on: ubuntu-latest
+    name: Test K3s options
+    steps:
+      - uses: actions/checkout@v2
+      - id: k3s
+        uses: ./
+        with:
+          metrics-enabled: false
+          traefik-enabled: false
+          docker-enabled: true
+      # This action should export KUBECONFIG
+
+      - name: Kubectl
+        run: |
+          kubectl version
+          kubectl get deploy,daemonset,pods --all-namespaces
+          kubectl get --namespace kube-system deploy metrics-server || ret=$?
+          if [ $ret -eq 0 ]; then
+            echo "ERROR: metrics-server should be disabled"
+            exit 1
+          fi
+          kubectl get --namespace kube-system deploy traefik || ret=$?
+          if [ $ret -eq 0 ]; then
+            echo "ERROR: traefik should be disabled"
+            exit 1
+          fi
+          docker info
+          docker ps
+        shell: bash
+
+  # Provides a single status_all check that can be used in GitHub branch
+  # protection rules instead of having to list each matrix job
+  # https://github.community/t/status-check-for-a-matrix-jobs/127354/7
+  status_all:
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    name: Status matrix Test
+    needs:
+      - test_install_k3s
+      - test_install_k3s_options
+    steps:
+      - name: Check build matrix status
+        if: ${{ needs.test_install_k3s.result != 'success' }}
+        run: exit 1

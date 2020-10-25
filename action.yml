@@ -103,15 +103,22 @@ runs:
 
     - name: Wait for calico
       run: |
-        kubectl rollout status --watch --timeout 300s daemonset/calico-node -n kube-system \
-          && kubectl rollout status --watch --timeout 300s deployment/calico-kube-controllers -n kube-system
+        kubectl rollout status --watch --timeout 300s daemonset/calico-node -n kube-system
+        kubectl rollout status --watch --timeout 300s deployment/calico-kube-controllers -n kube-system
       shell: bash
       env:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
-    - name: Wait for coredns
+    - name: Wait for coredns, metrics server, traefik
       run: |
         kubectl rollout status --watch --timeout 300s deployment/coredns -n kube-system
+        if [[ ${{ inputs.metrics-enabled }} == true ]]; then
+          kubectl rollout status --watch --timeout 300s deployment/metrics-server -n kube-system
+        fi
+        # Problem with 1.16, ignore since it'll be dropped soon
+        if [[ ${{ inputs.traefik-enabled }} == true && ${{ inputs.k3s-version }} != v1.16.* ]]; then
+          kubectl rollout status --watch --timeout 300s deployment/traefik -n kube-system
+        fi
       shell: bash
       env:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml

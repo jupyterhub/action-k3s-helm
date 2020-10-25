@@ -9,9 +9,9 @@ Install K3s with Calico for network policies, and Helm 3.
    Versions 1.16 and later are supported.
 - `helm-version`: Helm version, see https://github.com/helm/helm/releases.
    Versions 3.1 and later are supported.
-- `metrics-enabled`: Enable or disable K3S metrics-server
-- `traefik-enabled`: Enable or disable K3S Traefik ingress
-- `docker-enabled`: Use Docker for K3s
+- `metrics-enabled`: Enable or disable K3S metrics-server, `true` (default) or `false`
+- `traefik-enabled`: Enable or disable K3S Traefik ingress, `true` (default) or `false`
+- `docker-enabled`: Use Docker for K3s, `true` or `false` (default)
 
 
 ## Outputs

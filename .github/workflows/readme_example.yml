@@ -1,6 +1,8 @@
 # Keep this in sync with the example in the README.md
 ---
 name: Example
+
+# yamllint disable-line rule:truthy
 on: push
 
 jobs:
