@@ -1,10 +1,9 @@
 ---
 name: Test
 
-# yamllint disable-line rule:truthy
 on:
-  - pull_request
-  - push
+  pull_request:
+  push:
 
 jobs:
   # https://github.com/pre-commit/action

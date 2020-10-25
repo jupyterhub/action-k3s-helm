@@ -1,10 +1,9 @@
 ---
-name: Test
+name: Test options
 
-# yamllint disable-line rule:truthy
 on:
-  - pull_request
-  - push
+  pull_request:
+  push:
 
 jobs:
 
