@@ -44,6 +44,9 @@ jobs:
           kubectl version
           kubectl get storageclass
           kubectl get deploy,daemonset,pods --all-namespaces
+          # These options should be enabled
+          kubectl get --namespace kube-system deploy metrics-server
+          kubectl get --namespace kube-system deploy traefik
         shell: bash
 
       - name: Helm

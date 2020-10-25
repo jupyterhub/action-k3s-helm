@@ -1,0 +1,40 @@
+---
+name: Test
+
+# yamllint disable-line rule:truthy
+on:
+  - pull_request
+  - push
+
+jobs:
+
+  test_install_k3s:
+    runs-on: ubuntu-latest
+    name: Test K3s options
+    steps:
+      - uses: actions/checkout@v2
+      - id: k3s
+        uses: ./
+        with:
+          metrics-enabled: false
+          traefik-enabled: false
+          docker-enabled: true
+      # This action should export KUBECONFIG
+
+      - name: Kubectl
+        run: |
+          kubectl version
+          kubectl get deploy,daemonset,pods --all-namespaces
+          kubectl get --namespace kube-system deploy metrics-server || ret=$?
+          if [ $ret -eq 0 ]; then
+            echo "ERROR: metrics-server should be disabled"
+            exit 1
+          fi
+          kubectl get --namespace kube-system deploy traefik || ret=$?
+          if [ $ret -eq 0 ]; then
+            echo "ERROR: traefik should be disabled"
+            exit 1
+          fi
+          docker info
+          docker ps
+        shell: bash

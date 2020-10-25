@@ -23,6 +23,19 @@ inputs:
     description: Helm 3 version (https://github.com/helm/helm/releases)
     required: true
     default: v3.3.4
+  metrics-enabled:
+    description: Enable or disable K3S metrics-server
+    required: true
+    default: "true"
+  traefik-enabled:
+    description: Enable or disable K3S Traefik ingress
+    required: true
+    default: "true"
+  docker-enabled:
+    description: Use Docker for K3s
+    required: true
+    default: "false"
+
 outputs:
   kubeconfig:
     description: Path to kubeconfig file
@@ -46,14 +59,25 @@ runs:
       run: |
         if [[ ${{ inputs.k3s-version }} == v1.16.* ]]; then
           k3s_disable_command=--no-deploy
+        else
+          k3s_disable_command=--disable
+        fi
+        if [[ ${{ inputs.metrics-enabled }} != true ]]; then
+          k3s_disable_metrics="${k3s_disable_command} metrics-server"
+        fi
+        if [[ ${{ inputs.traefik-enabled }} != true ]]; then
+          k3s_disable_traefik="${k3s_disable_command} traefik"
+        fi
+        if [[ ${{ inputs.docker-enabled }} == true ]]; then
+          k3s_docker=--docker
         fi
         curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${{ inputs.k3s-version }} sh -s - \
           --write-kubeconfig-mode=644 \
-          "${k3s_disable_command:---disable}" metrics-server \
-          "${k3s_disable_command:---disable}" traefik \
+          ${k3s_disable_metrics} \
+          ${k3s_disable_traefik} \
           --disable-network-policy \
           --flannel-backend=none \
-          --docker
+          ${k3s_docker}
       shell: bash
 
     # Install calico as a CNI to enforce our NetworkPolicies. Note that canal
