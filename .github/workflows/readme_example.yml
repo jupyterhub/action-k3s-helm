@@ -8,7 +8,7 @@ on: push
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Install K3s
+    name: README example
     steps:
       - id: k3s
         uses: manics/action-k3s-helm@main
