@@ -105,6 +105,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Status matrix Test
     needs:
+      - pre-commit
       - test_install_k3s
       - test_install_k3s_options
     steps:
