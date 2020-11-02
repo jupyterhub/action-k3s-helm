@@ -101,6 +101,14 @@ runs:
       env:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
+    # There will be some waiting for calico to make the k8s Nodes ready and for
+    # the k3s related pods to start and become ready, so there is time to
+    # install Helm at this point for example.
+    - name: Setup Helm ${{ inputs.helm-version }}
+      run: |
+        curl -sf https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION=${{ inputs.helm-version }} bash
+      shell: bash
+
     - name: Wait for calico
       run: |
         kubectl rollout status --watch --timeout 300s daemonset/calico-node -n kube-system
@@ -122,11 +130,6 @@ runs:
       shell: bash
       env:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-
-    - name: Setup Helm ${{ inputs.helm-version }}
-      run: |
-        curl -sf https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION=${{ inputs.helm-version }} bash
-      shell: bash
 
     - name: Export KUBECONFIG environment variable
       run: echo "KUBECONFIG=/etc/rancher/k3s/k3s.yaml" >> $GITHUB_ENV
