@@ -39,6 +39,7 @@ jobs:
           helm-version: ${{ matrix.helm }}
           metrics-enabled: true
           traefik-enabled: true
+          docker-enabled: false
       # This action should export KUBECONFIG
 
       - name: Kubectl
@@ -76,6 +77,8 @@ jobs:
       - id: k3s
         uses: ./
         with:
+          k3s-version: ""
+          helm-version: ""
           metrics-enabled: false
           traefik-enabled: false
           docker-enabled: true

@@ -26,11 +26,11 @@ inputs:
   metrics-enabled:
     description: Enable or disable K3S metrics-server
     required: false
-    default: "false"
+    default: "true"
   traefik-enabled:
     description: Enable or disable K3S Traefik ingress
     required: false
-    default: "false"
+    default: "true"
   docker-enabled:
     description: Enable K3s to use the Docker daemon
     required: false
