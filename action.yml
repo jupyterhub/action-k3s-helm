@@ -57,21 +57,21 @@ runs:
     #       --disable.
     - name: Setup k3s ${{ inputs.k3s-version }}
       run: |
-        if [[ ${{ inputs.k3s-version }} == v1.16.* ]]; then
+        if [[ "${{ inputs.k3s-version }}" == "v1.16.*" ]]; then
           k3s_disable_command=--no-deploy
         else
           k3s_disable_command=--disable
         fi
-        if [[ ${{ inputs.metrics-enabled }} != true ]]; then
+        if [[ "${{ inputs.metrics-enabled }}" != "true" ]]; then
           k3s_disable_metrics="${k3s_disable_command} metrics-server"
         fi
-        if [[ ${{ inputs.traefik-enabled }} != true ]]; then
+        if [[ "${{ inputs.traefik-enabled }}" != "true" ]]; then
           k3s_disable_traefik="${k3s_disable_command} traefik"
         fi
-        if [[ ${{ inputs.docker-enabled }} == true ]]; then
+        if [[ "${{ inputs.docker-enabled }}" == "true" ]]; then
           k3s_docker=--docker
         fi
-        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${{ inputs.k3s-version }} sh -s - \
+        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="${{ inputs.k3s-version }}" sh -s - \
           --write-kubeconfig-mode=644 \
           ${k3s_disable_metrics} \
           ${k3s_disable_traefik} \
@@ -106,7 +106,7 @@ runs:
     # install Helm at this point for example.
     - name: Setup Helm ${{ inputs.helm-version }}
       run: |
-        curl -sf https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION=${{ inputs.helm-version }} bash
+        curl -sf https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="${{ inputs.helm-version }}" bash
       shell: bash
 
     - name: Wait for calico
@@ -120,11 +120,11 @@ runs:
     - name: Wait for coredns, metrics server, traefik
       run: |
         kubectl rollout status --watch --timeout 300s deployment/coredns -n kube-system
-        if [[ ${{ inputs.metrics-enabled }} == true ]]; then
+        if [[ "${{ inputs.metrics-enabled }}" == "true" ]]; then
           kubectl rollout status --watch --timeout 300s deployment/metrics-server -n kube-system
         fi
         # Problem with 1.16, ignore since it'll be dropped soon
-        if [[ ${{ inputs.traefik-enabled }} == true && ${{ inputs.k3s-version }} != v1.16.* ]]; then
+        if [[ "${{ inputs.traefik-enabled }}" == "true" && "${{ inputs.k3s-version }}" != "v1.16.*" ]]; then
           kubectl rollout status --watch --timeout 300s deployment/traefik -n kube-system
         fi
       shell: bash
