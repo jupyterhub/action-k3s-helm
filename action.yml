@@ -17,23 +17,23 @@ branding:
 inputs:
   k3s-version:
     description: K3S version (https://github.com/rancher/k3s/releases)
-    required: true
+    required: false
     default: v1.19.3+k3s1
   helm-version:
     description: Helm 3 version (https://github.com/helm/helm/releases)
-    required: true
+    required: false
     default: v3.3.4
   metrics-enabled:
     description: Enable or disable K3S metrics-server
-    required: true
+    required: false
     default: "true"
   traefik-enabled:
     description: Enable or disable K3S Traefik ingress
-    required: true
+    required: false
     default: "true"
   docker-enabled:
     description: Use Docker for K3s
-    required: true
+    required: false
     default: "false"
 
 outputs:
