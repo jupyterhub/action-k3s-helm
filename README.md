@@ -12,6 +12,7 @@ Install K3s with Calico for network policies, and Helm 3.
 - `metrics-enabled`: Enable or disable K3S metrics-server, `true` (default) or `false`.
 - `traefik-enabled`: Enable or disable K3S Traefik ingress, `true` (default) or `false`.
 - `docker-enabled`: Enable K3s to use the Docker daemon, `true` or `false` (default).
+- `extra-setup-args`: Extra arguments passed unquoted to the K3s setup script, use this if you require advanced customisation.
 
 
 ## Outputs
