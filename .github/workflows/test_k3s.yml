@@ -37,6 +37,9 @@ jobs:
         with:
           k3s-version: ${{ matrix.k3s }}
           helm-version: ${{ matrix.helm }}
+          metrics-enabled: true
+          traefik-enabled: true
+          docker-enabled: false
       # This action should export KUBECONFIG
 
       - name: Kubectl
@@ -47,8 +50,8 @@ jobs:
           # These options should be enabled
           kubectl get --namespace kube-system deploy metrics-server
           # Problem with 1.16, ignore since it'll be dropped soon
-          if [[ ${{ matrix.k3s }} != v1.16.* ]]; then
-            kubectl get --namespace kube-system deploy traefik
+          if [[ "${{ matrix.k3s }}" != v1.16.* ]]; then
+              kubectl get --namespace kube-system deploy traefik
           fi
         shell: bash
 
@@ -74,6 +77,8 @@ jobs:
       - id: k3s
         uses: ./
         with:
+          k3s-version: ""
+          helm-version: ""
           metrics-enabled: false
           traefik-enabled: false
           docker-enabled: true
