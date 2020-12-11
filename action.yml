@@ -35,6 +35,10 @@ inputs:
     description: Enable K3s to use the Docker daemon
     required: false
     default: "false"
+  extra-setup-args:
+    description: Addition arguments to be passed to the K3S setup script
+    required: false
+    default: ""
 
 outputs:
   kubeconfig:
@@ -77,7 +81,8 @@ runs:
           ${k3s_disable_traefik} \
           --disable-network-policy \
           --flannel-backend=none \
-          ${k3s_docker}
+          ${k3s_docker} \
+          ${{ inputs.extra-setup-args }}
       shell: bash
 
     # Install calico as a CNI to enforce our NetworkPolicies. Note that canal
