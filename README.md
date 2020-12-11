@@ -43,4 +43,16 @@ jobs:
 ```
 
 
+## Development
+
 This is based on https://github.com/jupyterhub/zero-to-jupyterhub-k8s/blob/08c13609c1d0c6cb07d45d49d0a876100cf941eb/ci/common by [@consideratio](https://github.com/consideratio).
+
+This action aims to to provide an easy to use Kubernetes cluster with the following features:
+- K3s
+- Helm 3+
+- Calico network provider that supports network policies
+
+A small number of features are configurable.
+All K3s defaults are kept except where they conflict with the deployment of Calico.
+Due to the difficulty in comprehensively testing this action the aim is to minimise the number of arguments.
+If you have an advanced use case hopefully `extra-setup-args` will be sufficient.
