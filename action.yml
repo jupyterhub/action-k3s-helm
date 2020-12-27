@@ -19,6 +19,10 @@ inputs:
     description: K3S version (https://github.com/rancher/k3s/releases)
     required: false
     default: ""
+  k3s-channel:
+    description: K3S channel (https://update.k3s.io/v1-release/channels)
+    required: false
+    default: ""
   helm-version:
     description: Helm 3 version (https://github.com/helm/helm/releases)
     required: false
@@ -59,9 +63,16 @@ runs:
     #
     # NOTE: k3s 1.16 and older needed a flag named --no-deploy instead of
     #       --disable.
-    - name: Setup k3s ${{ inputs.k3s-version }}
+    - name: Validate input
       run: |
-        if [[ "${{ inputs.k3s-version }}" == v1.16.* ]]; then
+        if [[ -n "${{ inputs.k3s-version }}" && -n "${{ inputs.k3s-channel }}" ]]; then
+          echo "k3s-version and k3s-channel must not be specified simultaneously!"
+          exit 1
+        fi
+      shell: bash
+    - name: Setup k3s ${{ inputs.k3s-version }}${{ inputs.k3s-channel }}
+      run: |
+        if [[ "${{ inputs.k3s-version }}${{ inputs.k3s-channel }}" == v1.16.* ]]; then
           k3s_disable_command=--no-deploy
         else
           k3s_disable_command=--disable
@@ -75,7 +86,7 @@ runs:
         if [[ "${{ inputs.docker-enabled }}" == true ]]; then
           k3s_docker=--docker
         fi
-        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="${{ inputs.k3s-version }}" sh -s - \
+        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="${{ inputs.k3s-version }}" INSTALL_K3S_CHANNEL="${{ inputs.k3s-channel }}" sh -s - \
           --write-kubeconfig-mode=644 \
           ${k3s_disable_metrics} \
           ${k3s_disable_traefik} \
@@ -129,7 +140,7 @@ runs:
           kubectl rollout status --watch --timeout 300s deployment/metrics-server -n kube-system
         fi
         # Problem with 1.16, ignore since it'll be dropped soon
-        if [[ "${{ inputs.traefik-enabled }}" == true && "${{ inputs.k3s-version }}" != v1.16.* ]]; then
+        if [[ "${{ inputs.traefik-enabled }}" == true && "${{ inputs.k3s-version }}${{ inputs.k3s-channel }}" != v1.16.* ]]; then
           kubectl rollout status --watch --timeout 300s deployment/traefik -n kube-system
         fi
       shell: bash
