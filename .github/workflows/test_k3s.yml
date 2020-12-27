@@ -1,7 +1,10 @@
 ---
 name: Test
 
-# yamllint disable-line rule:truthy
+# Inline config of yamllint, ref: https://yamllint.readthedocs.io/
+#
+# yamllint disable rule:line-length
+
 on:
   pull_request:
   push:
