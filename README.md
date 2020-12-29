@@ -1,14 +1,12 @@
 # GitHub Action: Install K3s, Calico and Helm
 [![GitHub Action badge](https://github.com/manics/action-k3s-helm/workflows/Test/badge.svg)](https://github.com/manics/action-k3s-helm/actions)
 
-Install K3s with Calico for network policies, and Helm 3.
+Install K3s (1.16+), Calico (3.16) for network policy enforcement, and Helm (3.1+).
 
 
 ## Optional input parameters
-- `k3s-version`: K3s version, see https://github.com/rancher/k3s/releases.
-   Versions 1.16 and later are supported. Defaults to the latest version.
-- `helm-version`: Helm version, see https://github.com/helm/helm/releases.
-   Versions 3.1 and later are supported. Defaults to the latest version.
+- `k3s-version` or `k3s-channel`: Specify a K3s [version](https://github.com/rancher/k3s/releases) or [release channel](https://update.k3s.io/v1-release/channels). Versions 1.16 and later are supported. Defaults to the stable channel.
+- `helm-version`: Specify a Helm [version](https://github.com/helm/helm/releases). Versions 3.1 and later are supported. Defaults to the latest version.
 - `metrics-enabled`: Enable or disable K3S metrics-server, `true` (default) or `false`.
 - `traefik-enabled`: Enable or disable K3S Traefik ingress, `true` (default) or `false`.
 - `docker-enabled`: Enable K3s to use the Docker daemon, `true` or `false` (default).
