@@ -107,7 +107,7 @@ runs:
     #
     - name: Setup calico
       run: |
-        curl -sfL https://docs.projectcalico.org/v3.16/manifests/calico.yaml \
+        curl -sfL https://docs.projectcalico.org/v3.17/manifests/calico.yaml \
           | sed '/"type": "calico"/a\
             "container_settings": {\
               "allow_ip_forwarding": true\

@@ -1,7 +1,7 @@
 # GitHub Action: Install K3s, Calico and Helm
 [![GitHub Action badge](https://github.com/manics/action-k3s-helm/workflows/Test/badge.svg)](https://github.com/manics/action-k3s-helm/actions)
 
-Install K3s (1.16+), Calico (3.16) for network policy enforcement, and Helm (3.1+).
+Install K3s (1.16+), Calico (3.17) for network policy enforcement, and Helm (3.1+).
 
 
 ## Optional input parameters
