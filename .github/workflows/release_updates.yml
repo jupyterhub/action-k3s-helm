@@ -2,7 +2,9 @@
 # release, use the GitHub UI where you enter a tag name and release name of
 # "vX.Y.Z". See https://github.com/jupyterhub/action-k3s-helm/releases.
 #
-#
+# Inline config for yamllint, ref: https://yamllint.readthedocs.io/
+# yamllint disable rule:line-length
+---
 name: Release updates
 
 on:

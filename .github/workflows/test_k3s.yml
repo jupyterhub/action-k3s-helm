@@ -1,9 +1,9 @@
+# Runs tests referencing the local GitHub Action to verify it works as intended.
+#
+# Inline config for yamllint, ref: https://yamllint.readthedocs.io/
+# yamllint disable rule:line-length
 ---
 name: Test
-
-# Inline config of yamllint, ref: https://yamllint.readthedocs.io/
-#
-# yamllint disable rule:line-length
 
 on:
   pull_request:
