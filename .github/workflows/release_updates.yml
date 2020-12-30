@@ -1,0 +1,25 @@
+# Automatically updates "vX" branches based on GitHub releases. To cut a new
+# release, use the GitHub UI where you enter a tag name and release name of
+# "vX.Y.Z". See https://github.com/jupyterhub/action-k3s-helm/releases.
+#
+# Inline config for yamllint, ref: https://yamllint.readthedocs.io/
+# yamllint disable rule:line-length
+---
+name: Release updates
+
+on:
+  release:
+    types: [published, edited]
+
+jobs:
+  actions-tagger:
+    runs-on: windows-latest
+    steps:
+      # Action reference: https://github.com/Actions-R-Us/actions-tagger
+      - uses: Actions-R-Us/actions-tagger@c46540b9f3302c3b4e6a7bd622cb478fc98c52be
+        env:
+          GITHUB_TOKEN: "${{ github.token }}"
+        with:
+          # By using branches as identifiers it is still possible to backtrack
+          # some patch, but not if we use tags.
+          prefer_branch_releases: true
