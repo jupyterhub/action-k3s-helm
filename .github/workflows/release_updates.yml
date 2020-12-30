@@ -14,7 +14,7 @@ jobs:
     runs-on: windows-latest
     steps:
       # Action reference: https://github.com/Actions-R-Us/actions-tagger
-      - uses: Actions-R-Us/actions-tagger@latest
+      - uses: Actions-R-Us/actions-tagger@c46540b9f3302c3b4e6a7bd622cb478fc98c52be
         env:
           GITHUB_TOKEN: "${{ github.token }}"
         with:
