@@ -23,4 +23,3 @@ jobs:
           # By using branches as identifiers it is still possible to backtrack
           # some patch, but not if we use tags.
           prefer_branch_releases: true
-          publish_latest_tag: true
