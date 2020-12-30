@@ -20,24 +20,32 @@ The `KUBECONFIG` environment variable is also set by this action.
 
 ## Example
 ```
-name: Example
-on: push
+name: Example workflow
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    name: Install K3s
+  k8s-test:
+    runs-on: ubuntu-20.04
     steps:
-      - id: k3s
-        uses: manics/action-k3s-helm@main
+      # GitHub Action reference: https://github.com/jupyterhub/action-k3s-helm
+      - name: Start k8s locally
+        uses: jupyterhub/action-k3s-helm@v1
         with:
-          k3s-version: v1.19.3+k3s1
-          helm-version: v3.3.4
-      - run: |
+          k3s-version: v1.20.0+k3s2   # releases:  https://github.com/k3s-io/k3s/tags
+          helm-version: v3.4.2        # releases:  https://github.com/helm/helm/tags
+
+      - name: Verify function of k8s, kubectl, and helm
+        run: |
           echo "kubeconfig: $KUBECONFIG"
+          kubectl version
           kubectl get pods --all-namespaces
+
+          helm version
           helm list
-        shell: bash
 ```
 
 
