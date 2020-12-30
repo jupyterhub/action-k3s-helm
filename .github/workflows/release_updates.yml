@@ -16,7 +16,10 @@ jobs:
     runs-on: windows-latest
     steps:
       # Action reference: https://github.com/Actions-R-Us/actions-tagger
-      - uses: Actions-R-Us/actions-tagger@c46540b9f3302c3b4e6a7bd622cb478fc98c52be
+      # NOTE: We pin a version not to have the source code (.ts files), but the
+      #       compiled source code (.js files). This git hash is what v2.0.1
+      #       referenced 30 December 2020.
+      - uses: Actions-R-Us/actions-tagger@95c51c646e75db5c6b7d447e3087bcee58677341
         env:
           GITHUB_TOKEN: "${{ github.token }}"
         with:
