@@ -18,6 +18,10 @@ enforcement, and installs [Helm](https://helm.sh/) (3.1+).
 ## Outputs
 - `kubeconfig`: The absolute path to the kubeconfig file (`$HOME/.kube/config`).
   The `KUBECONFIG` environment variable is also set by this action but may be removed in a future breaking release.
+- `k3s-version`: Installed k3s version, such as v1.20.0+k3s2
+- `k8s-version`: Installed k8s version, such as v1.20.0
+- `calico-version`: Installed calico version, such as v3.17.1
+- `helm-version`: Installed helm version, such as v3.4.2
 
 
 ## Example
