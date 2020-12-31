@@ -63,6 +63,13 @@ jobs:
 
       - name: Action's set outputs and env
         run: |
+          echo "KUBECONFIG=${KUBECONFIG}"
+          echo "kubeconfig=${{ steps.k3s.outputs.kubeconfig }}"
+          echo "k3s-version=${{ steps.k3s.outputs.k3s-version }}"
+          echo "k8s-version=${{ steps.k3s.outputs.k8s-version }}"
+          echo "calico-version=${{ steps.k3s.outputs.calico-version }}"
+          echo "helm-version=${{ steps.k3s.outputs.helm-version }}"
+
           EXIT=0
           if [[ -z "${KUBECONFIG}" ]]; then
               echo "KUBECONFIG not set as an environment variable"
@@ -80,10 +87,15 @@ jobs:
               echo "k8s-version not set as an action output"
               EXIT=1
           fi
+          if [[ -z "${{ steps.k3s.outputs.calico-version }}" ]]; then
+              echo "calico-version not set as an action output"
+              EXIT=1
+          fi
           if [[ -z "${{ steps.k3s.outputs.helm-version }}" ]]; then
               echo "helm-version not set as an action output"
               EXIT=1
           fi
+
           exit $EXIT
 
       - name: Kubectl
