@@ -72,7 +72,7 @@ runs:
       shell: bash
     - name: Setup k3s ${{ inputs.k3s-version }}${{ inputs.k3s-channel }}
       run: |
-        if [[ "${{ inputs.k3s-version }}${{ inputs.k3s-channel }}" == v1.16.* ]]; then
+        if [[ "${{ inputs.k3s-version }}${{ inputs.k3s-channel }}" == v1.16* ]]; then
           k3s_disable_command=--no-deploy
         else
           k3s_disable_command=--disable
@@ -140,7 +140,7 @@ runs:
           kubectl rollout status --watch --timeout 300s deployment/metrics-server -n kube-system
         fi
         # Problem with 1.16, ignore since it'll be dropped soon
-        if [[ "${{ inputs.traefik-enabled }}" == true && "${{ inputs.k3s-version }}${{ inputs.k3s-channel }}" != v1.16.* ]]; then
+        if [[ "${{ inputs.traefik-enabled }}" == true && "${{ inputs.k3s-version }}${{ inputs.k3s-channel }}" != v1.16* ]]; then
           kubectl rollout status --watch --timeout 300s deployment/traefik -n kube-system
         fi
       shell: bash
