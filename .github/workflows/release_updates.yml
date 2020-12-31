@@ -11,6 +11,10 @@ on:
   release:
     types: [published, edited]
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   actions-tagger:
     runs-on: windows-latest
