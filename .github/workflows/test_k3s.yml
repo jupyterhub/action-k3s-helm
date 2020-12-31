@@ -60,7 +60,31 @@ jobs:
           metrics-enabled: true
           traefik-enabled: true
           docker-enabled: false
-      # This action should export KUBECONFIG
+
+      - name: Action's set outputs and env
+        run: |
+          EXIT=0
+          if [[ -z "${KUBECONFIG}" ]]; then
+              echo "KUBECONFIG not set as an environment variable"
+              EXIT=1
+          fi
+          if [[ -z "${{ steps.k3s.outputs.kubeconfig }}" ]]; then
+              echo "kubeconfig not set as an action output"
+              EXIT=1
+          fi
+          if [[ -z "${{ steps.k3s.outputs.k3s-version }}" ]]; then
+              echo "k3s-version not set as an action output"
+              EXIT=1
+          fi
+          if [[ -z "${{ steps.k3s.outputs.k8s-version }}" ]]; then
+              echo "k8s-version not set as an action output"
+              EXIT=1
+          fi
+          if [[ -z "${{ steps.k3s.outputs.helm-version }}" ]]; then
+              echo "helm-version not set as an action output"
+              EXIT=1
+          fi
+          exit $EXIT
 
       - name: Kubectl
         run: |
@@ -100,7 +124,6 @@ jobs:
           metrics-enabled: false
           traefik-enabled: false
           docker-enabled: true
-      # This action should export KUBECONFIG
 
       - name: Kubectl
         run: |
