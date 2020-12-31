@@ -66,6 +66,7 @@ jobs:
           echo "k8s-version=${{ steps.k3s.outputs.k8s-version }}"
           echo "calico-version=${{ steps.k3s.outputs.calico-version }}"
           echo "helm-version=${{ steps.k3s.outputs.helm-version }}"
+          echo "---"
 
           EXIT=0
           if [[ -z "${KUBECONFIG}" ]]; then
@@ -76,20 +77,20 @@ jobs:
               echo "kubeconfig not set as an action output"
               EXIT=1
           fi
-          if [[ -z "${{ steps.k3s.outputs.k3s-version }}" ]]; then
-              echo "k3s-version not set as an action output"
+          if [[ "${{ steps.k3s.outputs.k3s-version }}" != v* ]]; then
+              echo "k3s-version not set correctly as an action output"
               EXIT=1
           fi
-          if [[ -z "${{ steps.k3s.outputs.k8s-version }}" ]]; then
-              echo "k8s-version not set as an action output"
+          if [[ "${{ steps.k3s.outputs.k8s-version }}" != v* ]]; then
+              echo "k8s-version not set correctly as an action output"
               EXIT=1
           fi
-          if [[ -z "${{ steps.k3s.outputs.calico-version }}" ]]; then
-              echo "calico-version not set as an action output"
+          if [[ "${{ steps.k3s.outputs.calico-version }}" != v* ]]; then
+              echo "calico-version not set correctly as an action output"
               EXIT=1
           fi
-          if [[ -z "${{ steps.k3s.outputs.helm-version }}" ]]; then
-              echo "helm-version not set as an action output"
+          if [[ "${{ steps.k3s.outputs.helm-version }}" != v* ]]; then
+              echo "helm-version not set correctly as an action output"
               EXIT=1
           fi
 
