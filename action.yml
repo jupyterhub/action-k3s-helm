@@ -88,7 +88,7 @@ runs:
           k3s_docker=--docker
         fi
         curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="${{ inputs.k3s-version }}" INSTALL_K3S_CHANNEL="${{ inputs.k3s-channel }}" sh -s - \
-          --write-kubeconfig-mode=644 \
+          --write-kubeconfig-mode=666 \
           ${k3s_disable_metrics} \
           ${k3s_disable_traefik} \
           --disable-network-policy \
