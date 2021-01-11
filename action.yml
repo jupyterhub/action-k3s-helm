@@ -95,6 +95,11 @@ runs:
           --flannel-backend=none \
           ${k3s_docker} \
           ${{ inputs.extra-setup-args }}
+
+        # We elevate permissions to allow "kubectl config set-context" to work
+        # without sudo. Apparently k3s.yaml.lock is created when it run, which
+        # requires write privileges.
+        sudo chmod +666 /etc/rancher/k3s
       shell: bash
 
     - name: Export KUBECONFIG environment variable
