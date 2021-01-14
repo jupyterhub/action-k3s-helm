@@ -1,5 +1,5 @@
 # GitHub Action: Install K3s, Calico and Helm
-[![GitHub Action badge](https://github.com/manics/action-k3s-helm/workflows/Test/badge.svg)](https://github.com/manics/action-k3s-helm/actions)
+[![GitHub Action badge](https://github.com/jupyterhub/action-k3s-helm/workflows/Test/badge.svg)](https://github.com/jupyterhub/action-k3s-helm/actions)
 
 Install K3s (1.16+), Calico (3.17) for network policy enforcement, and Helm (3.1+).
 
@@ -15,11 +15,11 @@ Install K3s (1.16+), Calico (3.17) for network policy enforcement, and Helm (3.1
 
 ## Outputs
 - `kubeconfig`: The path to the kube-config file.
-The `KUBECONFIG` environment variable is also set by this action.
+  The `KUBECONFIG` environment variable is also set by this action.
 
 
 ## Example
-```
+```yaml
 name: Example workflow
 
 on:
