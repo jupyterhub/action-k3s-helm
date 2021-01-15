@@ -55,7 +55,7 @@ inputs:
 outputs:
   kubeconfig:
     description: Path to kubeconfig file
-    value: ${{ env.KUBECONFIG }}
+    value: ${{ steps.set-output.outputs.kubeconfig }}
   k3s-version:
     description: "Installed k3s version, such as v1.20.0+k3s2"
     value: "${{ steps.set-output.outputs.k3s-version }}"
@@ -154,6 +154,7 @@ runs:
     - name: Set version output
       id: set-output
       run: |
+        echo "::set-output name=kubeconfig::$HOME/.kube/config"
         echo "::set-output name=k3s-version::$(k3s --version | sed 's/.*\(v[0-9][^ ]*\).*/\1/')"
         echo "::set-output name=k8s-version::$(k3s --version | sed 's/.*\(v[0-9][^+]*\).*/\1/')"
         echo "::set-output name=calico-version::$(cat /tmp/calico.yaml | grep --max-count=1 "calico/cni:v" | sed 's/.*calico\/cni:\(.*\)/\1/')"
