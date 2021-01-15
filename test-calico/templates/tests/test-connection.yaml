@@ -12,8 +12,8 @@ spec:
   containers:
     - name: wget
       image: busybox
-      command: ['wget']
-      args: ['-T5', 'test-calico:80']
+      command: ["wget"]
+      args: ["-T5", "test-calico:80"]
   restartPolicy: Never
 
 ---
@@ -30,12 +30,12 @@ spec:
   containers:
     - name: wget
       image: busybox
-      command: ['sh']
+      command: ["sh"]
       args: [
-        '-c',
-        'if wget -T5 test-calico:80; then
-           echo FAIL: should be blocked;
-           exit 1;
-         fi'
-      ]
+          "-c",
+          "if wget -T5 test-calico:80; then
+          echo FAIL: should be blocked;
+          exit 1;
+          fi",
+        ]
   restartPolicy: Never

@@ -8,7 +8,6 @@
 # Reference: https://docs.github.com/en/free-pro-team@latest/actions/creating-actions/metadata-syntax-for-github-actions
 #
 ---
-
 name: K3S with Calico and Helm
 description: |
   Install Kubernetes (K3S) and Helm 3.
