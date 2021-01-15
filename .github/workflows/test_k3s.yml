@@ -109,6 +109,11 @@ jobs:
           helm version
           helm list
 
+          if helm version 2>&1 | grep WARNING > /dev/null; then
+              echo "helm is expected to run without a WARNING!"
+              exit 1
+          fi
+
       - name: Install network policies test
         run: helm install test-calico ./test-calico --wait
 
