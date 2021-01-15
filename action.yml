@@ -115,10 +115,14 @@ runs:
           ${{ inputs.extra-setup-args }}
       shell: bash
 
+    # By providing a kubeconfig owned by the current user with 600 permissions,
+    # kubectl becomes usable without sudo, and helm won't emit warnings about
+    # bloated access to group/world.
     - name: Prepare a kubeconfig in ~/.kube/config
       run: |
         mkdir -p ~/.kube
         sudo cat /etc/rancher/k3s/k3s.yaml > "$HOME/.kube/config"
+        chmod 600 "$HOME/.kube/config"
         echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
       shell: bash
 
