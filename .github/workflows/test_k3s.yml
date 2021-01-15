@@ -1,7 +1,4 @@
 # Runs tests referencing the local GitHub Action to verify it works as intended.
-#
-# Inline config for yamllint, ref: https://yamllint.readthedocs.io/
-# yamllint disable rule:line-length
 ---
 name: Test
 
@@ -56,7 +53,44 @@ jobs:
           metrics-enabled: true
           traefik-enabled: true
           docker-enabled: false
-      # This action should export KUBECONFIG
+
+      - name: Action's set outputs and env
+        run: |
+          echo "KUBECONFIG=${KUBECONFIG}"
+          echo "kubeconfig=${{ steps.k3s.outputs.kubeconfig }}"
+          echo "k3s-version=${{ steps.k3s.outputs.k3s-version }}"
+          echo "k8s-version=${{ steps.k3s.outputs.k8s-version }}"
+          echo "calico-version=${{ steps.k3s.outputs.calico-version }}"
+          echo "helm-version=${{ steps.k3s.outputs.helm-version }}"
+          echo "---"
+
+          EXIT=0
+          if [[ -z "${KUBECONFIG}" ]]; then
+              echo "KUBECONFIG not set as an environment variable"
+              EXIT=1
+          fi
+          if [[ -z "${{ steps.k3s.outputs.kubeconfig }}" ]]; then
+              echo "kubeconfig not set as an action output"
+              EXIT=1
+          fi
+          if [[ "${{ steps.k3s.outputs.k3s-version }}" != v* ]]; then
+              echo "k3s-version not set correctly as an action output"
+              EXIT=1
+          fi
+          if [[ "${{ steps.k3s.outputs.k8s-version }}" != v* ]]; then
+              echo "k8s-version not set correctly as an action output"
+              EXIT=1
+          fi
+          if [[ "${{ steps.k3s.outputs.calico-version }}" != v* ]]; then
+              echo "calico-version not set correctly as an action output"
+              EXIT=1
+          fi
+          if [[ "${{ steps.k3s.outputs.helm-version }}" != v* ]]; then
+              echo "helm-version not set correctly as an action output"
+              EXIT=1
+          fi
+
+          exit $EXIT
 
       - name: Kubectl
         run: |
@@ -69,21 +103,17 @@ jobs:
           if [[ "${{ matrix.k3s-version }}${{ matrix.k3s-channel }}" != v1.16* ]]; then
               kubectl get --namespace kube-system deploy traefik
           fi
-        shell: bash
 
       - name: Helm
         run: |
           helm version
           helm list
-        shell: bash
 
       - name: Install network policies test
         run: helm install test-calico ./test-calico --wait
-        shell: bash
 
       - name: Run network policies test
         run: helm test test-calico --logs
-        shell: bash
 
   test_install_k3s_options:
     runs-on: ubuntu-latest
@@ -100,7 +130,6 @@ jobs:
           metrics-enabled: false
           traefik-enabled: false
           docker-enabled: true
-      # This action should export KUBECONFIG
 
       - name: Kubectl
         run: |
@@ -118,7 +147,6 @@ jobs:
           fi
           docker info
           docker ps
-        shell: bash
 
   # Provides a single status_all check that can be used in GitHub branch
   # protection rules instead of having to list each matrix job

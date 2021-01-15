@@ -4,3 +4,5 @@ repos:
     rev: v1.25.0
     hooks:
       - id: yamllint
+        args:
+          - --config-data=relaxed

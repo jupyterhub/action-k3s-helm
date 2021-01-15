@@ -1,7 +1,5 @@
 # This workflow is meant to verify the example we keep in the README.md is
 # functional. Due to this, we need to make sure we keep it in sync.
-#
-# yamllint disable rule:line-length
 ---
 name: Example workflow
 
