@@ -1,8 +1,10 @@
 # GitHub Action: Install K3s, Calico and Helm
 [![GitHub Action badge](https://github.com/jupyterhub/action-k3s-helm/workflows/Test/badge.svg)](https://github.com/jupyterhub/action-k3s-helm/actions)
 
-Install K3s (1.16+), Calico (3.17) for network policy enforcement, and Helm (3.1+).
-
+Setups a Kubernetes cluster using [K3s](https://k3s.io/) (1.16+) with
+[Calico](https://www.projectcalico.org/) (3.17) for
+[NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+enforcement, and installs [Helm](https://helm.sh/) (3.1+).
 
 ## Optional input parameters
 - `k3s-version` or `k3s-channel`: Specify a K3s [version](https://github.com/rancher/k3s/releases) or [release channel](https://update.k3s.io/v1-release/channels). Versions 1.16 and later are supported. Defaults to the stable channel.
@@ -14,8 +16,8 @@ Install K3s (1.16+), Calico (3.17) for network policy enforcement, and Helm (3.1
 
 
 ## Outputs
-- `kubeconfig`: The path to the kube-config file.
-  The `KUBECONFIG` environment variable is also set by this action.
+- `kubeconfig`: The absolute path to the kubeconfig file (`$HOME/.kube/config`).
+  The `KUBECONFIG` environment variable is also set by this action but may be removed in a future breaking release.
 
 
 ## Example
