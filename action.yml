@@ -99,8 +99,7 @@ runs:
     - name: Prepare a kubeconfig in ~/.kube/config
       run: |
         mkdir -p ~/.kube
-        sudo cp /etc/rancher/k3s/k3s.yaml "$HOME/.kube/config"
-        sudo chown $(id -u):$(id -g) "$HOME/.kube/config"
+        sudo cat /etc/rancher/k3s/k3s.yaml > "$HOME/.kube/config"
         echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
       shell: bash
 

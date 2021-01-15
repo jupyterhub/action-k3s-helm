@@ -16,9 +16,8 @@ enforcement, and installs [Helm](https://helm.sh/) (3.1+).
 
 
 ## Outputs
-- `kubeconfig`: The absolute path to the kubeconfig file which is created by the
-  action at the location of what `$HOME/.kube/config` evaluates to. The
-  `KUBECONFIG` environment variable is also set by this action.
+- `kubeconfig`: The absolute path to the kubeconfig file (`$HOME/.kube/config`).
+  The `KUBECONFIG` environment variable is also set by this action but may be removed in a future breaking release.
 
 
 ## Example
