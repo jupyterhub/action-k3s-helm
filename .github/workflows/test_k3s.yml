@@ -9,10 +9,6 @@ on:
       - "v*"
   workflow_dispatch:
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
   # https://github.com/pre-commit/action
   pre-commit:
