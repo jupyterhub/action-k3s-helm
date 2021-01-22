@@ -120,6 +120,15 @@ jobs:
       - name: Run network policies test
         run: helm test test-calico --logs
 
+      # GitHub Action reference: https://github.com/jupyterhub/action-k8s-namespace-report
+      - name: Kubernetes namespace report
+        if: always()
+        uses: jupyterhub/action-k8s-namespace-report@v1
+        with:
+          # NOTE: This modifies the kubeconfig's current context's default
+          #       namespace as of v1.0.1...
+          namespace: kube-system
+
   test_install_k3s_options:
     runs-on: ubuntu-latest
     name: Test K3s options
