@@ -11,6 +11,8 @@ on:
 jobs:
   actions-tagger:
     runs-on: windows-latest
+    permissions:
+      contents: write
     steps:
       # Action reference: https://github.com/Actions-R-Us/actions-tagger
       # NOTE: We pin a version not to have the source code (.ts files), but the
