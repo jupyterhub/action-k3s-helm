@@ -137,7 +137,7 @@ runs:
     #
     - name: Setup calico
       run: |
-        curl -sfL --output /tmp/calico.yaml https://docs.projectcalico.org/v3.17/manifests/calico.yaml
+        curl -sfL --output /tmp/calico.yaml https://docs.projectcalico.org/v3.20/manifests/calico.yaml
         cat /tmp/calico.yaml \
           | sed '/"type": "calico"/a\
             "container_settings": {\
