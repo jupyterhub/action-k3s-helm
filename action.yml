@@ -80,8 +80,6 @@ runs:
     #
     #       ref: https://github.com/rancher/k3s/issues/947#issuecomment-627641541
     #
-    # NOTE: k3s 1.16 and older needed a flag named --no-deploy instead of
-    #       --disable.
     - name: Validate input
       run: |
         if [[ -n "${{ inputs.k3s-version }}" && -n "${{ inputs.k3s-channel }}" ]]; then
@@ -92,16 +90,11 @@ runs:
 
     - name: Setup k3s ${{ inputs.k3s-version }}${{ inputs.k3s-channel }}
       run: |
-        if [[ "${{ inputs.k3s-version }}${{ inputs.k3s-channel }}" == v1.16* ]]; then
-          k3s_disable_command=--no-deploy
-        else
-          k3s_disable_command=--disable
-        fi
         if [[ "${{ inputs.metrics-enabled }}" != true ]]; then
-          k3s_disable_metrics="${k3s_disable_command} metrics-server"
+          k3s_disable_metrics="--disable metrics-server"
         fi
         if [[ "${{ inputs.traefik-enabled }}" != true ]]; then
-          k3s_disable_traefik="${k3s_disable_command} traefik"
+          k3s_disable_traefik="--disable traefik"
         fi
         if [[ "${{ inputs.docker-enabled }}" == true ]]; then
           k3s_docker=--docker
@@ -176,8 +169,7 @@ runs:
         if [[ "${{ inputs.metrics-enabled }}" == true ]]; then
           kubectl rollout status --watch --timeout 300s deployment/metrics-server -n kube-system
         fi
-        # Problem with 1.16, ignore since it'll be dropped soon
-        if [[ "${{ inputs.traefik-enabled }}" == true && "${{ inputs.k3s-version }}${{ inputs.k3s-channel }}" != v1.16* ]]; then
+        if [[ "${{ inputs.traefik-enabled }}" == true ]]; then
           kubectl rollout status --watch --timeout 300s deployment/traefik -n kube-system
         fi
       shell: bash
