@@ -5,7 +5,7 @@
 #
 # yamllint disable rule:line-length
 #
-# Reference: https://docs.github.com/en/free-pro-team@latest/actions/creating-actions/metadata-syntax-for-github-actions
+# Reference: https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions
 #
 ---
 name: K3S with Calico and Helm
