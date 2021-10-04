@@ -170,6 +170,11 @@ runs:
           kubectl rollout status --watch --timeout 300s deployment/metrics-server -n kube-system
         fi
         if [[ "${{ inputs.traefik-enabled }}" == true ]]; then
+          # NOTE: Different versions of k3s install traefik in different ways,
+          #       by waiting for these jobs if they exist, we will be fine no
+          #       matter what.
+          kubectl wait --for=condition=complete --timeout=300s job/helm-install-traefik-crd -n kube-system || true
+          kubectl wait --for=condition=complete --timeout=300s job/helm-install-traefik -n kube-system || true
           kubectl rollout status --watch --timeout 300s deployment/traefik -n kube-system
         fi
       shell: bash
