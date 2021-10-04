@@ -40,11 +40,16 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       # GitHub Action reference: https://github.com/jupyterhub/action-k3s-helm
-      - name: Start k8s locally
-        uses: jupyterhub/action-k3s-helm@v1
+      - name: Start a local k8s cluster
+        uses: jupyterhub/action-k3s-helm@v2
         with:
-          k3s-version: v1.20.0+k3s2 # releases:  https://github.com/k3s-io/k3s/tags
-          helm-version: v3.4.2 # releases:  https://github.com/helm/helm/tags
+          # See available:
+          # - k3s release channels at https://github.com/k3s-io/k3s/blob/HEAD/channel.yaml
+          # - k3s versions at https://github.com/k3s-io/k3s/tags
+          # - helm versions at https://github.com/helm/helm/tags
+          k3s-channel: latest
+          # k3s-version: v1.22.2+k3s1
+          # helm-version: v3.7.0
 
       - name: Verify function of k8s, kubectl, and helm
         run: |
