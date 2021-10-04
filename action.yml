@@ -5,7 +5,7 @@
 #
 # yamllint disable rule:line-length
 #
-# Reference: https://docs.github.com/en/free-pro-team@latest/actions/creating-actions/metadata-syntax-for-github-actions
+# Reference: https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions
 #
 ---
 name: K3S with Calico and Helm
@@ -82,14 +82,17 @@ runs:
     #
     - name: Validate input
       run: |
+        echo "::group::Validate input"
         if [[ -n "${{ inputs.k3s-version }}" && -n "${{ inputs.k3s-channel }}" ]]; then
           echo "k3s-version and k3s-channel must not be specified simultaneously!"
           exit 1
         fi
+        echo "::endgroup::"
       shell: bash
 
     - name: Setup k3s ${{ inputs.k3s-version }}${{ inputs.k3s-channel }}
       run: |
+        echo "::group::Setup k3s ${{ inputs.k3s-version }}${{ inputs.k3s-channel }}"
         if [[ "${{ inputs.metrics-enabled }}" != true ]]; then
           k3s_disable_metrics="--disable metrics-server"
         fi
@@ -106,6 +109,7 @@ runs:
           --flannel-backend=none \
           ${k3s_docker} \
           ${{ inputs.extra-setup-args }}
+        echo "::endgroup::"
       shell: bash
 
     # By providing a kubeconfig owned by the current user with 600 permissions,
@@ -113,10 +117,12 @@ runs:
     # bloated access to group/world.
     - name: Prepare a kubeconfig in ~/.kube/config
       run: |
+        echo "::group::Prepare a kubeconfig in ~/.kube/config"
         mkdir -p ~/.kube
         sudo cat /etc/rancher/k3s/k3s.yaml > "$HOME/.kube/config"
         chmod 600 "$HOME/.kube/config"
         echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+        echo "::endgroup::"
       shell: bash
 
     # Install calico as a CNI to enforce our NetworkPolicies. Note that canal
@@ -128,8 +134,9 @@ runs:
     #
     # ref: https://rancher.com/docs/k3s/latest/en/installation/network-options/
     #
-    - name: Setup calico
+    - name: Setup calico v3.20
       run: |
+        echo "::group::Setup calico v3.20"
         curl -sfL --output /tmp/calico.yaml https://docs.projectcalico.org/v3.20/manifests/calico.yaml
         cat /tmp/calico.yaml \
           | sed '/"type": "calico"/a\
@@ -137,6 +144,7 @@ runs:
               "allow_ip_forwarding": true\
             },' \
           | kubectl apply -f -
+        echo "::endgroup::"
       shell: bash
 
     # There will be some waiting for calico to make the k8s Nodes ready and for
@@ -144,31 +152,44 @@ runs:
     # install Helm at this point for example.
     - name: Setup Helm ${{ inputs.helm-version }}
       run: |
+        echo "::group::Setup Helm ${{ inputs.helm-version }}"
         curl -sf https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="${{ inputs.helm-version }}" bash
+        echo "::endgroup::"
       shell: bash
 
     - name: Set version output
       id: set-output
       run: |
+        echo "::group::Set version output"
         echo "::set-output name=kubeconfig::$HOME/.kube/config"
         echo "::set-output name=k3s-version::$(k3s --version | sed 's/.*\(v[0-9][^ ]*\).*/\1/')"
         echo "::set-output name=k8s-version::$(k3s --version | sed 's/.*\(v[0-9][^+]*\).*/\1/')"
         echo "::set-output name=calico-version::$(cat /tmp/calico.yaml | grep --max-count=1 "calico/cni:v" | sed 's/.*calico\/cni:\(.*\)/\1/')"
         echo "::set-output name=helm-version::$(helm version --short | sed 's/\([^+]*\).*/\1/')"
+        echo "::endgroup::"
       shell: bash
 
-    - name: Wait for calico
+    - name: Wait for calico, coredns, metrics server, traefik
       run: |
+        echo "::group::Wait for daemonset/calico-node"
         kubectl rollout status --watch --timeout 300s daemonset/calico-node -n kube-system
-        kubectl rollout status --watch --timeout 300s deployment/calico-kube-controllers -n kube-system
-      shell: bash
+        echo "::endgroup::"
 
-    - name: Wait for coredns, metrics server, traefik
-      run: |
+        echo "::group::Wait for deployment/calico-kube-controllers"
+        kubectl rollout status --watch --timeout 300s deployment/calico-kube-controllers -n kube-system
+        echo "::endgroup::"
+
+        echo "::group::Wait for deployment/coredns"
         kubectl rollout status --watch --timeout 300s deployment/coredns -n kube-system
+        echo "::endgroup::"
+
+        echo "::group::Wait for deployment/metrics-server"
         if [[ "${{ inputs.metrics-enabled }}" == true ]]; then
           kubectl rollout status --watch --timeout 300s deployment/metrics-server -n kube-system
         fi
+        echo "::endgroup::"
+
+        echo "::group::Wait for deployment/traefik"
         if [[ "${{ inputs.traefik-enabled }}" == true ]]; then
           # NOTE: Different versions of k3s install traefik in different ways,
           #       by waiting for these jobs if they exist, we will be fine no
@@ -177,4 +198,5 @@ runs:
           kubectl wait --for=condition=complete --timeout=300s job/helm-install-traefik -n kube-system || true
           kubectl rollout status --watch --timeout 300s deployment/traefik -n kube-system
         fi
+        echo "::endgroup::"
       shell: bash
