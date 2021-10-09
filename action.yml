@@ -62,7 +62,7 @@ outputs:
     description: "Installed k8s version, such as v1.20.0"
     value: "${{ steps.set-output.outputs.k8s-version }}"
   calico-version:
-    description: "Installed calico version, such as v3.17.1"
+    description: "Installed calico version, such as v3.20.2"
     value: "${{ steps.set-output.outputs.calico-version }}"
   helm-version:
     description: "Installed helm version, such as v3.4.2"
