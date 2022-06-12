@@ -1,0 +1,25 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: protected-webserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: protected-webserver
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: protected-webserver
+    spec:
+      containers:
+        - name: nginx
+          image: "nginx:{{ .Chart.AppVersion }}"
+          ports:
+            - name: http
+              containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
