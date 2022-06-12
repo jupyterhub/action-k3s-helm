@@ -156,6 +156,28 @@ jobs:
             exit 1
           fi
 
+      # When using `docker-enabled: true` locally built images with docker
+      # should be available without loading them for use by the k3s CRI.
+      #
+      - name: Verify local image is available for the k8s cluster
+        run: |
+          docker pull busybox:latest
+          docker tag busybox:latest jupyterhub/action-k3s-helm:available-locally
+
+          cat <<EOF | kubectl apply -f -
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            name: image-available-locally
+          spec:
+            containers:
+              - name: image-available-locally
+                image: jupyterhub/action-k3s-helm:available-locally
+                args: ["sleep", "30"]
+          EOF
+
+          kubectl wait pod image-available-locally --for condition=Ready --timeout=30s
+
       # ref: https://github.com/jupyterhub/action-k8s-namespace-report
       - name: Kubernetes namespace report
         uses: jupyterhub/action-k8s-namespace-report@v1
@@ -178,7 +200,8 @@ jobs:
     needs:
       - test_install_k3s
       - test_install_k3s_options
+
     steps:
       - name: Check build matrix status
-        if: ${{ needs.test_install_k3s.result != 'success' }}
+        if: needs.test_install_k3s.result != 'success' || needs.test_install_k3s_options.result != 'success'
         run: exit 1

@@ -3,6 +3,9 @@
 - The action drops support for use with k8s 1.19 and lower.
 - Calico bumped from 3.20 to 3.21 for when k3s 1.20 is used.
 - Calico bumped from 3.20 to 3.23 for when k3s 1.21+ is used.
+- The `docker-enabled` input now provides
+  [cri-dockerd](https://github.com/Mirantis/cri-dockerd) and configures k3s for
+  use against it, and like this we retain support for it with k3s version 1.24+.
 
 ## v2
 
