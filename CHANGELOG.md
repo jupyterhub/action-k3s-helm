@@ -1,3 +1,9 @@
+## v3 - unreleased
+
+- The action drops support for use with k8s 1.19 and lower.
+- Calico bumped from 3.20 to 3.21 for when k3s 1.20 is used.
+- Calico bumped from 3.20 to 3.23 for when k3s 1.21+ is used.
+
 ## v2
 
 ### v2.0.0 - 2021-10-04
