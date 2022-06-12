@@ -32,7 +32,7 @@ jobs:
             k3s-channel: ""
             helm-version: v3.2.4
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Local action
         id: k3s
         uses: ./
@@ -120,7 +120,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Test K3s options
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Local action
         id: k3s
         uses: ./
