@@ -21,7 +21,3 @@ jobs:
       - uses: Actions-R-Us/actions-tagger@95c51c646e75db5c6b7d447e3087bcee58677341
         env:
           GITHUB_TOKEN: "${{ github.token }}"
-        with:
-          # By using branches as identifiers it is still possible to backtrack
-          # some patch, but not if we use tags.
-          prefer_branch_releases: true
