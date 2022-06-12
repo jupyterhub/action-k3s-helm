@@ -134,10 +134,14 @@ runs:
     #
     # ref: https://rancher.com/docs/k3s/latest/en/installation/network-options/
     #
-    - name: Setup calico v3.20
+    - name: Setup calico
       run: |
-        echo "::group::Setup calico v3.20"
-        curl -sfL --output /tmp/calico.yaml https://docs.projectcalico.org/v3.20/manifests/calico.yaml
+        echo "::group::Setup calico"
+        if [[ "${{ inputs.k3s-version }}${{ inputs.k3s-channel }}" == v1.20* ]]; then
+          curl -sfL --output /tmp/calico.yaml https://docs.projectcalico.org/v3.21/manifests/calico.yaml
+        else
+          curl -sfL --output /tmp/calico.yaml https://projectcalico.docs.tigera.io/v3.23/manifests/calico.yaml
+        fi
         cat /tmp/calico.yaml \
           | sed '/"type": "calico"/a\
             "container_settings": {\
