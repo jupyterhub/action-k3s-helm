@@ -178,7 +178,8 @@ jobs:
     needs:
       - test_install_k3s
       - test_install_k3s_options
+
     steps:
       - name: Check build matrix status
-        if: ${{ needs.test_install_k3s.result != 'success' }}
+        if: needs.test_install_k3s.result != 'success' || needs.test_install_k3s_options.result != 'success'
         run: exit 1
