@@ -6,19 +6,12 @@ on:
   pull_request:
   push:
     branches-ignore:
-      - "v*"
+      - "dependabot/**"
+      - "pre-commit-ci-update-config"
+    tags: ["**"]
   workflow_dispatch:
 
 jobs:
-  # https://github.com/pre-commit/action
-  pre-commit:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-      - uses: pre-commit/action@v2.0.0
-
   test_install_k3s:
     runs-on: ubuntu-latest
     name: Test K3s and Helm
@@ -164,7 +157,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Status matrix Test
     needs:
-      - pre-commit
       - test_install_k3s
       - test_install_k3s_options
     steps:
