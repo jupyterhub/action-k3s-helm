@@ -90,6 +90,25 @@ runs:
         echo "::endgroup::"
       shell: bash
 
+    - name: Setup cri-dockerd
+      if: inputs.docker-enabled == 'true'
+      run: |
+        cd /tmp
+
+        wget -qO cri-dockerd.tgz https://github.com/Mirantis/cri-dockerd/releases/download/v0.2.1/cri-dockerd-0.2.1.amd64.tgz
+        tar xvf cri-dockerd.tgz
+        mv cri-dockerd/cri-dockerd /usr/local/bin/
+
+        wget -q https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.service
+        wget -q https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.socket
+        sudo mv cri-docker.socket cri-docker.service /etc/systemd/system/
+        sudo sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service
+
+        sudo systemctl daemon-reload
+        sudo systemctl enable cri-docker.service
+        sudo systemctl enable --now cri-docker.socket
+      shell: bash
+
     - name: Setup k3s ${{ inputs.k3s-version }}${{ inputs.k3s-channel }}
       run: |
         echo "::group::Setup k3s ${{ inputs.k3s-version }}${{ inputs.k3s-channel }}"
@@ -100,7 +119,7 @@ runs:
           k3s_disable_traefik="--disable traefik"
         fi
         if [[ "${{ inputs.docker-enabled }}" == true ]]; then
-          k3s_docker=--docker
+          k3s_docker=--container-runtime-endpoint=/run/cri-dockerd.sock
         fi
         curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="${{ inputs.k3s-version }}" INSTALL_K3S_CHANNEL="${{ inputs.k3s-channel }}" sh -s - \
           ${k3s_disable_metrics} \
