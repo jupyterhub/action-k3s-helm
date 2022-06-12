@@ -126,16 +126,24 @@ jobs:
         uses: ./
         with:
           k3s-version: ""
-          k3s-channel: ""
+          k3s-channel: "latest"
           helm-version: ""
           metrics-enabled: false
           traefik-enabled: false
           docker-enabled: true
 
-      - name: Kubectl
+      - name: Print kubectl info
         run: |
           kubectl version
           kubectl get deploy,daemonset,pods --all-namespaces
+
+      - name: Print docker info
+        run: |
+          docker info
+          docker ps
+
+      - name: Verify metrics-server and traefik is installed
+        run: |
           kubectl get --namespace kube-system deploy metrics-server || ret=$?
           if [ $ret -eq 0 ]; then
             echo "ERROR: metrics-server should be disabled"
@@ -146,8 +154,18 @@ jobs:
             echo "ERROR: traefik should be disabled"
             exit 1
           fi
-          docker info
-          docker ps
+
+      # ref: https://github.com/jupyterhub/action-k8s-namespace-report
+      - name: Kubernetes namespace report
+        uses: jupyterhub/action-k8s-namespace-report@v1
+        if: always()
+        with:
+          namespace: kube-system
+          important-workloads: >
+            ds/calico-node
+            deploy/calico-kube-controllers
+            deploy/metrics-server
+            deploy/traefik
 
   # Provides a single status_all check that can be used in GitHub branch
   # protection rules instead of having to list each matrix job
