@@ -1,0 +1,22 @@
+# This network policy targets the protected-webserver pod with regards to
+# ingress, thereby disallowing all inbound network connections unless allowed by
+# a rule. We provide one such rule, allowing access to the protected-webserer
+# from pods with a certain label.
+#
+# Two different pods will attempt to connect to the protected-webserver, one
+# with the label and one without, and we expect different results based on this
+# network policy.
+#
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-ingress-from-labelled-pods
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: protected-webserver
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              access-to-protected-webserver: "true"

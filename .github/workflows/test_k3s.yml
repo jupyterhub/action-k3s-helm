@@ -22,15 +22,44 @@ jobs:
           - k3s-version: ""
             k3s-channel: latest
             helm-version: ""
+            metrics-enabled: "true"
+            traefik-enabled: "true"
+            docker-enabled: "false"
+
           - k3s-version: ""
-            k3s-channel: stable
-            helm-version: v3.9.0
+            k3s-channel: latest
+            helm-version: ""
+            metrics-enabled: "false"
+            traefik-enabled: "false"
+            docker-enabled: "true"
+
           - k3s-version: ""
-            k3s-channel: v1.21
-            helm-version: v3.3.4
+            k3s-channel: latest
+            helm-version: ""
+            metrics-enabled: "true"
+            traefik-enabled: "true"
+            docker-enabled: "true"
+
+          - k3s-version: ""
+            k3s-channel: latest
+            helm-version: ""
+            metrics-enabled: "false"
+            traefik-enabled: "false"
+            docker-enabled: "false"
+
           - k3s-version: v1.20.15+k3s1
             k3s-channel: ""
             helm-version: v3.5.0
+            metrics-enabled: "true"
+            traefik-enabled: "true"
+            docker-enabled: "false"
+
+          - k3s-version: v1.20.15+k3s1
+            k3s-channel: ""
+            helm-version: v3.5.0
+            metrics-enabled: "false"
+            traefik-enabled: "false"
+            docker-enabled: "true"
 
     steps:
       - uses: actions/checkout@v3
@@ -41,11 +70,11 @@ jobs:
           k3s-version: ${{ matrix.k3s-version }}
           k3s-channel: ${{ matrix.k3s-channel }}
           helm-version: ${{ matrix.helm-version }}
-          metrics-enabled: true
-          traefik-enabled: true
-          docker-enabled: false
+          metrics-enabled: ${{ matrix.metrics-enabled }}
+          traefik-enabled: ${{ matrix.traefik-enabled }}
+          docker-enabled: ${{ matrix.docker-enabled }}
 
-      - name: Action's set outputs and env
+      - name: Verify action's outputs and env
         run: |
           echo "KUBECONFIG=${KUBECONFIG}"
           echo "kubeconfig=${{ steps.k3s.outputs.kubeconfig }}"
@@ -88,9 +117,11 @@ jobs:
           kubectl version
           kubectl get storageclass
           kubectl get deploy,daemonset,pods --all-namespaces
-          # These options should be enabled
-          kubectl get --namespace kube-system deploy metrics-server
-          kubectl get --namespace kube-system deploy traefik
+
+      - name: Information from docker
+        run: |
+          docker info
+          docker ps
 
       - name: Information from helm
         run: |
@@ -102,64 +133,27 @@ jobs:
               exit 1
           fi
 
-      - name: Install network policies test
-        run: helm install test-calico ./test-calico --wait
-
-      - name: Run network policies test
-        run: helm test test-calico --logs
-
-      # GitHub Action reference: https://github.com/jupyterhub/action-k8s-namespace-report
-      - name: Kubernetes namespace report
-        if: always()
-        uses: jupyterhub/action-k8s-namespace-report@v1
-        with:
-          # NOTE: This modifies the kubeconfig's current context's default
-          #       namespace as of v1.0.1...
-          namespace: kube-system
-
-  test_install_k3s_options:
-    runs-on: ubuntu-latest
-    name: Test K3s options
-    steps:
-      - uses: actions/checkout@v3
-      - name: Local action
-        id: k3s
-        uses: ./
-        with:
-          k3s-version: ""
-          k3s-channel: "latest"
-          helm-version: ""
-          metrics-enabled: false
-          traefik-enabled: false
-          docker-enabled: true
-
-      - name: Print kubectl info
+      - name: Verify deploy/metrics-server based on metrics-enabled input
         run: |
-          kubectl version
-          kubectl get deploy,daemonset,pods --all-namespaces
-
-      - name: Print docker info
-        run: |
-          docker info
-          docker ps
-
-      - name: Verify metrics-server and traefik is installed
-        run: |
-          kubectl get --namespace kube-system deploy metrics-server || ret=$?
-          if [ $ret -eq 0 ]; then
-            echo "ERROR: metrics-server should be disabled"
-            exit 1
+          kubectl get --namespace=kube-system deploy/metrics-server && enabled=true || enabled=false
+          if [[ "$enabled" != "${{ matrix.metrics-enabled }}" ]]; then
+              echo "ERROR: deploy/metrics-server detected or not, which broke an assumption"
+              exit 1
           fi
-          kubectl get --namespace kube-system deploy traefik || ret=$?
-          if [ $ret -eq 0 ]; then
-            echo "ERROR: traefik should be disabled"
-            exit 1
+
+      - name: Verify deploy/traefik based on traefik-enabled input
+        run: |
+          kubectl get --namespace=kube-system deploy/traefik && enabled=true || enabled=false
+          if [[ "$enabled" != "${{ matrix.traefik-enabled }}" ]]; then
+              echo "ERROR: deploy/traefik detected or not, which broke an assumption"
+              exit 1
           fi
 
       # When using `docker-enabled: true` locally built images with docker
       # should be available without loading them for use by the k3s CRI.
       #
       - name: Verify local image is available for the k8s cluster
+        if: matrix.docker-enabled == 'true'
         run: |
           docker pull busybox:latest
           docker tag busybox:latest jupyterhub/action-k3s-helm:available-locally
@@ -178,8 +172,14 @@ jobs:
 
           kubectl wait pod image-available-locally --for condition=Ready --timeout=30s
 
+      - name: Install netpol enforcement test chart
+        run: helm install test-netpol-enforcement ./test-netpol-enforcement --wait
+
+      - name: Run netpol enforcement test chart's tests
+        run: helm test test-netpol-enforcement --logs
+
       # ref: https://github.com/jupyterhub/action-k8s-namespace-report
-      - name: Kubernetes namespace report
+      - name: Kubernetes namespace report (kube-system)
         uses: jupyterhub/action-k8s-namespace-report@v1
         if: always()
         with:
@@ -194,14 +194,12 @@ jobs:
   # protection rules instead of having to list each matrix job
   # https://github.community/t/status-check-for-a-matrix-jobs/127354/7
   status_all:
-    if: ${{ always() }}
-    runs-on: ubuntu-latest
     name: Status matrix Test
-    needs:
-      - test_install_k3s
-      - test_install_k3s_options
+    if: always()
+    runs-on: ubuntu-latest
+    needs: [test_install_k3s]
 
     steps:
       - name: Check build matrix status
-        if: needs.test_install_k3s.result != 'success' || needs.test_install_k3s_options.result != 'success'
+        if: needs.test_install_k3s.result != 'success'
         run: exit 1
