@@ -1,4 +1,8 @@
-## v3 - unreleased
+## v3
+
+### v3.0.0 - 2022-06-13
+
+#### Breaking changes
 
 - The action drops support for use with k8s 1.19 and lower.
 - Calico bumped from 3.20 to 3.21 for when k3s 1.20 is used.
@@ -6,6 +10,33 @@
 - The `docker-enabled` input now provides
   [cri-dockerd](https://github.com/Mirantis/cri-dockerd) and configures k3s for
   use against it, and like this we retain support for it with k3s version 1.24+.
+
+#### Bugs fixed
+
+- Make cri-dockerd function with calico [#54](https://github.com/jupyterhub/action-k3s-helm/pull/54) ([@consideRatio](https://github.com/consideRatio))
+
+#### Maintenance and upkeep improvements
+
+- Install and use cri-dockerd as a dockershim for k8s 1.24+ support [#51](https://github.com/jupyterhub/action-k3s-helm/pull/51) ([@consideRatio](https://github.com/consideRatio))
+- ci: keep v1/v2/v3... tags updated instead of branches [#45](https://github.com/jupyterhub/action-k3s-helm/pull/45) ([@consideRatio](https://github.com/consideRatio))
+- Drop support for k3s 1.19 or lower, bump calico to 3.21 for k3s 1.20, and calico 3.23 for k3s 1.21+ [#43](https://github.com/jupyterhub/action-k3s-helm/pull/43) ([@consideRatio](https://github.com/consideRatio))
+
+#### Documentation improvements
+
+- Fix some incorrect versions which were modified in v2 [#38](https://github.com/jupyterhub/action-k3s-helm/pull/38) ([@manics](https://github.com/manics))
+- Add changelog for 2.0.0 [#36](https://github.com/jupyterhub/action-k3s-helm/pull/36) ([@consideRatio](https://github.com/consideRatio))
+
+#### Continuous integration
+
+- ci: test network policies in more situations [#52](https://github.com/jupyterhub/action-k3s-helm/pull/52) ([@consideRatio](https://github.com/consideRatio))
+- ci: test against k3s-channel=latest and use k8s-namespace-report [#50](https://github.com/jupyterhub/action-k3s-helm/pull/50) ([@consideRatio](https://github.com/consideRatio))
+- ci: use pre-commit.ci and dependabot [#46](https://github.com/jupyterhub/action-k3s-helm/pull/46) ([@consideRatio](https://github.com/consideRatio))
+
+#### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyterhub/action-k3s-helm/graphs/contributors?from=2021-10-05&to=2022-06-13&type=c))
+
+[@consideRatio](https://github.com/search?q=repo%3Ajupyterhub%2Faction-k3s-helm+involves%3AconsideRatio+updated%3A2021-10-05..2022-06-13&type=Issues) | [@manics](https://github.com/search?q=repo%3Ajupyterhub%2Faction-k3s-helm+involves%3Amanics+updated%3A2021-10-05..2022-06-13&type=Issues)
 
 ## v2
 
