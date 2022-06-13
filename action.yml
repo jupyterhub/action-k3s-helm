@@ -90,19 +90,27 @@ runs:
         echo "::endgroup::"
       shell: bash
 
-    - name: Setup cri-dockerd
+    # NOTE: The sed substitution operation is to run cri-dockerd in a way that
+    #       makes it work with calico as a CNI. This was based on
+    #       https://github.com/Mirantis/cri-dockerd/issues/42.
+    #
+    - name: Setup cri-dockerd as a dockershim
       if: inputs.docker-enabled == 'true'
+      env:
+        CRI_DOCKERD_VERSION: "0.2.2"
       run: |
         cd /tmp
 
-        wget -qO cri-dockerd.tgz https://github.com/Mirantis/cri-dockerd/releases/download/v0.2.1/cri-dockerd-0.2.1.amd64.tgz
-        tar xvf cri-dockerd.tgz
-        mv cri-dockerd/cri-dockerd /usr/local/bin/
+        wget -qO- https://github.com/Mirantis/cri-dockerd/releases/download/v${CRI_DOCKERD_VERSION}/cri-dockerd-${CRI_DOCKERD_VERSION}.amd64.tgz | tar -xvz --strip-components=1
+        wget -q https://raw.githubusercontent.com/Mirantis/cri-dockerd/v${CRI_DOCKERD_VERSION}/packaging/systemd/cri-docker.service
+        wget -q https://raw.githubusercontent.com/Mirantis/cri-dockerd/v${CRI_DOCKERD_VERSION}/packaging/systemd/cri-docker.socket
+        sudo mv cri-dockerd /usr/bin/
+        sudo mv cri-docker.socket /etc/systemd/system/
+        sudo mv cri-docker.service /etc/systemd/system/
 
-        wget -q https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.service
-        wget -q https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.socket
-        sudo mv cri-docker.socket cri-docker.service /etc/systemd/system/
-        sudo sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service
+        sudo sed --in-place --expression \
+            's,--network-plugin=,--network-plugin=cni --cni-bin-dir=/opt/cni/bin --cni-cache-dir=/var/lib/cni/cache --cni-conf-dir=/etc/cni/net.d,' \
+            /etc/systemd/system/cri-docker.service
 
         sudo systemctl daemon-reload
         sudo systemctl enable cri-docker.service
