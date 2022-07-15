@@ -19,6 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # re-trigger
           - info: v1.24
             # k3s-channel: v1.24
             k3s-commit: "990ba0e88c90f8ed8b50e0ccd375937b841b176e" # next patch RC
