@@ -225,6 +225,42 @@ jobs:
       - name: Run netpol enforcement test chart's tests
         run: helm test test-netpol-enforcement --logs
 
+      - name: Run netpol enforcement test chart's tests
+        run: helm test test-netpol-enforcement --logs
+
+      - name: Run netpol enforcement test chart's tests
+        run: helm test test-netpol-enforcement --logs
+
+      - name: Run netpol enforcement test chart's tests
+        run: helm test test-netpol-enforcement --logs
+
+      - name: Run netpol enforcement test chart's tests
+        run: helm test test-netpol-enforcement --logs
+
+      - name: Run netpol enforcement test chart's tests
+        run: helm test test-netpol-enforcement --logs
+
+      - name: Run netpol enforcement test chart's tests
+        run: helm test test-netpol-enforcement --logs
+
+      - name: Run netpol enforcement test chart's tests
+        run: helm test test-netpol-enforcement --logs
+
+      - name: Run netpol enforcement test chart's tests
+        run: helm test test-netpol-enforcement --logs
+
+      - name: Run netpol enforcement test chart's tests
+        run: helm test test-netpol-enforcement --logs
+
+      - name: Run netpol enforcement test chart's tests
+        run: helm test test-netpol-enforcement --logs
+
+      - name: Run netpol enforcement test chart's tests
+        run: helm test test-netpol-enforcement --logs
+
+      - name: Run netpol enforcement test chart's tests
+        run: helm test test-netpol-enforcement --logs
+
       # ref: https://github.com/jupyterhub/action-k8s-namespace-report
       - name: Kubernetes namespace report (kube-system)
         uses: jupyterhub/action-k8s-namespace-report@v1
