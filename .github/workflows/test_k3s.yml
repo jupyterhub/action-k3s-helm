@@ -199,15 +199,8 @@ jobs:
               exit 1
           fi
 
-      # When using `docker-enabled: true` locally built images with docker
-      # should be available without loading them for use by the k3s CRI.
-      #
-      - name: Verify local image is available for the k8s cluster
-        if: matrix.docker-enabled == 'true'
+      - name: Start dummy pod
         run: |
-          docker pull busybox:latest
-          docker tag busybox:latest jupyterhub/action-k3s-helm:available-locally
-
           cat <<EOF | kubectl apply -f -
           apiVersion: v1
           kind: Pod
@@ -216,8 +209,8 @@ jobs:
           spec:
             containers:
               - name: image-available-locally
-                image: jupyterhub/action-k3s-helm:available-locally
-                args: ["sleep", "30"]
+                image: busybox
+                args: ["sleep", "100"]
           EOF
 
           kubectl wait pod image-available-locally --for condition=Ready --timeout=30s
