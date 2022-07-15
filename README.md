@@ -9,7 +9,7 @@ enforcement, and installs [Helm](https://helm.sh/) (3.1+).
 
 ## Optional input parameters
 
-- `k3s-version` or `k3s-channel`: Specify a K3s [version](https://github.com/rancher/k3s/releases) or [release channel](https://update.k3s.io/v1-release/channels). Versions 1.16 and later are supported. Defaults to the stable channel.
+- `k3s-channel`, `k3s-version`, or `k3s-commit`: Specify a K3s [release channel](https://update.k3s.io/v1-release/channels), [version](https://github.com/k3s-io/k3s/releases), or full length [commit](https://github.com/k3s-io/k3s/commits/HEAD). Versions 1.20 and later are supported. Defaults to the stable channel.
 - `helm-version`: Specify a Helm [version](https://github.com/helm/helm/releases). Versions 3.1 and later are supported. Defaults to the latest version.
 - `metrics-enabled`: Enable or disable K3S metrics-server, `true` (default) or `false`.
 - `traefik-enabled`: Enable or disable K3S Traefik ingress, `true` (default) or `false`.

@@ -22,12 +22,16 @@ branding:
 # Thanks @consideratio !
 
 inputs:
-  k3s-version:
-    description: K3S version (https://github.com/rancher/k3s/releases)
-    required: false
-    default: ""
   k3s-channel:
     description: K3S channel (https://update.k3s.io/v1-release/channels)
+    required: false
+    default: ""
+  k3s-version:
+    description: K3S version (https://github.com/k3s-io/k3s/releases)
+    required: false
+    default: ""
+  k3s-commit:
+    description: K3S commit to install (https://github.com/k3s-io/k3s/releases)
     required: false
     default: ""
   helm-version:
@@ -78,13 +82,18 @@ runs:
     #       calico. --flannel-backend=none should not be passed if we don't want
     #       to install our own CNI.
     #
-    #       ref: https://github.com/rancher/k3s/issues/947#issuecomment-627641541
+    #       ref: https://github.com/k3s-io/k3s/issues/947#issuecomment-627641541
     #
     - name: Validate input
+      env:
+        INPUT_K3S_CHANNEL: "${{ inputs.k3s-channel }}"
+        INPUT_K3S_VERSION: "${{ inputs.k3s-version }}"
+        INPUT_K3S_COMMIT: "${{ inputs.k3s-commit }}"
       run: |
         echo "::group::Validate input"
-        if [[ -n "${{ inputs.k3s-version }}" && -n "${{ inputs.k3s-channel }}" ]]; then
-          echo "k3s-version and k3s-channel must not be specified simultaneously!"
+        VALIDATION_STRING="${INPUT_K3S_CHANNEL:+ok}${INPUT_K3S_VERSION:+ok}${INPUT_K3S_COMMIT:+ok}"
+        if [[ "${VALIDATION_STRING:-ok}" != "ok" ]]; then
+          echo "Specify at most one of the inputs: k3s-channel, k3s-version, and k3s-channel!"
           exit 1
         fi
         echo "::endgroup::"
@@ -129,7 +138,7 @@ runs:
         if [[ "${{ inputs.docker-enabled }}" == true ]]; then
           k3s_docker=--container-runtime-endpoint=/run/cri-dockerd.sock
         fi
-        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="${{ inputs.k3s-version }}" INSTALL_K3S_CHANNEL="${{ inputs.k3s-channel }}" sh -s - \
+        curl -sfL https://get.k3s.io | INSTALL_K3S_COMMIT="${{ inputs.k3s-commit }}" INSTALL_K3S_VERSION="${{ inputs.k3s-version }}" INSTALL_K3S_CHANNEL="${{ inputs.k3s-channel }}" sh -s - \
           ${k3s_disable_metrics} \
           ${k3s_disable_traefik} \
           --disable-network-policy \
