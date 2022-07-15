@@ -19,78 +19,93 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - k3s-commit: "990ba0e88c90f8ed8b50e0ccd375937b841b176e"
-            info: v1.24.3-rc1+k3s1
+          - info: v1.24
+            k3s-channel: v1.24
+            # k3s-commit: "990ba0e88c90f8ed8b50e0ccd375937b841b176e" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
-          - k3s-commit: "990ba0e88c90f8ed8b50e0ccd375937b841b176e"
-            info: v1.24.3-rc1+k3s1
+          - info: v1.24
+            k3s-channel: v1.24
+            # k3s-commit: "990ba0e88c90f8ed8b50e0ccd375937b841b176e" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
-          - k3s-commit: "990ba0e88c90f8ed8b50e0ccd375937b841b176e"
-            info: v1.24.3-rc1+k3s1
+          - info: v1.24
+            k3s-channel: v1.24
+            # k3s-commit: "990ba0e88c90f8ed8b50e0ccd375937b841b176e" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
-          - k3s-commit: "990ba0e88c90f8ed8b50e0ccd375937b841b176e"
-            info: v1.24.3-rc1+k3s1
+          - info: v1.24
+            k3s-channel: v1.24
+            # k3s-commit: "990ba0e88c90f8ed8b50e0ccd375937b841b176e" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
-          - k3s-commit: "990ba0e88c90f8ed8b50e0ccd375937b841b176e"
-            info: v1.24.3-rc1+k3s1
+          - info: v1.24
+            k3s-channel: v1.24
+            # k3s-commit: "990ba0e88c90f8ed8b50e0ccd375937b841b176e" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
-          - k3s-commit: "f45cf3267307b153ed8b418ae5b8ea6c6b9ebaca"
-            info: v1.23.9-rc1+k3s1
+          - info: v1.23
+            k3s-channel: v1.23
+            # k3s-commit: "f45cf3267307b153ed8b418ae5b8ea6c6b9ebaca" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
-          - k3s-commit: "f45cf3267307b153ed8b418ae5b8ea6c6b9ebaca"
-            info: v1.23.9-rc1+k3s1
+          - info: v1.23
+            k3s-channel: v1.23
+            # k3s-commit: "f45cf3267307b153ed8b418ae5b8ea6c6b9ebaca" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
-          - k3s-commit: "f45cf3267307b153ed8b418ae5b8ea6c6b9ebaca"
-            info: v1.23.9-rc1+k3s1
+          - info: v1.23
+            k3s-channel: v1.23
+            # k3s-commit: "f45cf3267307b153ed8b418ae5b8ea6c6b9ebaca" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
-          - k3s-commit: "f45cf3267307b153ed8b418ae5b8ea6c6b9ebaca"
-            info: v1.23.9-rc1+k3s1
+          - info: v1.23
+            k3s-channel: v1.23
+            # k3s-commit: "f45cf3267307b153ed8b418ae5b8ea6c6b9ebaca" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
-          - k3s-commit: "f45cf3267307b153ed8b418ae5b8ea6c6b9ebaca"
-            info: v1.23.9-rc1+k3s1
+          - info: v1.23
+            k3s-channel: v1.23
+            # k3s-commit: "f45cf3267307b153ed8b418ae5b8ea6c6b9ebaca" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
-          - k3s-commit: "17b9454cf0dcaac55f5b4dd903a65eecaeb7833e"
-            info: v1.22.12-rc1+k3s1
+          - info: v1.22
+            k3s-channel: v1.22
+            # k3s-commit: "17b9454cf0dcaac55f5b4dd903a65eecaeb7833e" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
-          - k3s-commit: "17b9454cf0dcaac55f5b4dd903a65eecaeb7833e"
-            info: v1.22.12-rc1+k3s1
+          - info: v1.22
+            k3s-channel: v1.22
+            # k3s-commit: "17b9454cf0dcaac55f5b4dd903a65eecaeb7833e" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
-          - k3s-commit: "17b9454cf0dcaac55f5b4dd903a65eecaeb7833e"
-            info: v1.22.12-rc1+k3s1
+          - info: v1.22
+            k3s-channel: v1.22
+            # k3s-commit: "17b9454cf0dcaac55f5b4dd903a65eecaeb7833e" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
-          - k3s-commit: "17b9454cf0dcaac55f5b4dd903a65eecaeb7833e"
-            info: v1.22.12-rc1+k3s1
+          - info: v1.22
+            k3s-channel: v1.22
+            # k3s-commit: "17b9454cf0dcaac55f5b4dd903a65eecaeb7833e" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
-          - k3s-commit: "17b9454cf0dcaac55f5b4dd903a65eecaeb7833e"
-            info: v1.22.12-rc1+k3s1
+          - info: v1.22
+            k3s-channel: v1.22
+            # k3s-commit: "17b9454cf0dcaac55f5b4dd903a65eecaeb7833e" # next patch RC
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
@@ -101,7 +116,7 @@ jobs:
         id: k3s
         uses: ./
         with:
-          k3s-commit: ${{ matrix.k3s-commit }}
+          # # k3s-commit: ${{ matrix.k3s-commit }} # next patch RC
           k3s-version: ${{ matrix.k3s-version }}
           k3s-channel: ${{ matrix.k3s-channel }}
           helm-version: ${{ matrix.helm-version }}
@@ -211,55 +226,89 @@ jobs:
         run: helm install test-netpol-enforcement ./test-netpol-enforcement --wait
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+        run: |
+          kubectl logs image-available-locally
+          kubectl exec image-available-locally echo hi
 
       # ref: https://github.com/jupyterhub/action-k8s-namespace-report
       - name: Kubernetes namespace report (kube-system)
