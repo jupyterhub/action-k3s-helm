@@ -302,29 +302,3 @@ jobs:
         run: |
           kubectl logs image-available-locally
           kubectl exec image-available-locally echo hi
-
-      # ref: https://github.com/jupyterhub/action-k8s-namespace-report
-      - name: Kubernetes namespace report (kube-system)
-        uses: jupyterhub/action-k8s-namespace-report@v1
-        if: always()
-        with:
-          namespace: kube-system
-          important-workloads: >
-            ds/calico-node
-            deploy/calico-kube-controllers
-            deploy/metrics-server
-            deploy/traefik
-
-  # Provides a single status_all check that can be used in GitHub branch
-  # protection rules instead of having to list each matrix job
-  # https://github.community/t/status-check-for-a-matrix-jobs/127354/7
-  status_all:
-    name: Status matrix Test
-    if: always()
-    runs-on: ubuntu-latest
-    needs: [test_install_k3s]
-
-    steps:
-      - name: Check build matrix status
-        if: needs.test_install_k3s.result != 'success'
-        run: exit 1
