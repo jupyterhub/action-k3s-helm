@@ -117,6 +117,15 @@ runs:
         sudo systemctl enable --now cri-docker.socket
       shell: bash
 
+    # NOTE: We apply a workaround as of version 3.0.1 by passing
+    #       --egress-selector-mode=disabled by default as not doing so following
+    #       modern versions of k3s has led to issues with `kubectl exec` and
+    #       `kubectl logs`.
+    #
+    #       For more details, see
+    #       https://github.com/jupyterhub/action-k3s-helm/issues/59 and its
+    #       linked issues.
+    #
     - name: Setup k3s ${{ inputs.k3s-version }}${{ inputs.k3s-channel }}
       run: |
         echo "::group::Setup k3s ${{ inputs.k3s-version }}${{ inputs.k3s-channel }}"
@@ -129,13 +138,17 @@ runs:
         if [[ "${{ inputs.docker-enabled }}" == true ]]; then
           k3s_docker=--container-runtime-endpoint=/run/cri-dockerd.sock
         fi
+        if [[ "${{ inputs.extra-setup-args }}" != *--egress-selector-mode* && "${{ inputs.k3s-version }}${{ inputs.k3s-channel }}" != v1.20* ]]; then
+          default_extra_setup_args=--egress-selector-mode=disabled
+        fi
         curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="${{ inputs.k3s-version }}" INSTALL_K3S_CHANNEL="${{ inputs.k3s-channel }}" sh -s - \
           ${k3s_disable_metrics} \
           ${k3s_disable_traefik} \
           --disable-network-policy \
           --flannel-backend=none \
           ${k3s_docker} \
-          ${{ inputs.extra-setup-args }}
+          ${{ inputs.extra-setup-args }} \
+          ${default_extra_setup_args}
         echo "::endgroup::"
       shell: bash
 
