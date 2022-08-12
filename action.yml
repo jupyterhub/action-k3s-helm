@@ -129,6 +129,7 @@ runs:
     - name: Setup k3s ${{ inputs.k3s-version }}${{ inputs.k3s-channel }}
       run: |
         echo "::group::Setup k3s ${{ inputs.k3s-version }}${{ inputs.k3s-channel }}"
+
         if [[ "${{ inputs.metrics-enabled }}" != true ]]; then
           k3s_disable_metrics="--disable metrics-server"
         fi
@@ -138,8 +139,26 @@ runs:
         if [[ "${{ inputs.docker-enabled }}" == true ]]; then
           k3s_docker=--container-runtime-endpoint=/run/cri-dockerd.sock
         fi
-        if [[ "${{ inputs.extra-setup-args }}" != *--egress-selector-mode* && "${{ inputs.k3s-version }}${{ inputs.k3s-channel }}" != v1.20* ]]; then
-          default_extra_setup_args=--egress-selector-mode=disabled
+        # We want to provide a new default value for the --egress-selector-mode
+        # flag to workaround the intermittent issue tracked here:
+        # https://github.com/k3s-io/k3s/issues/5633#issuecomment-1181424511.
+        #
+        if [[ "${{ inputs.extra-setup-args }}" != *--egress-selector-mode* ]]; then
+          # We check for k3s versions 1.22.10+, 1.23.7+, or 1.24.1+ or more
+          # recent where we know the --egress-selector-mode flag is defined.
+          # This includes when the version isn't specified or is specified as
+          # latest or stable.
+          #
+          # The verlte function was taken from this stackoverflow post:
+          # https://stackoverflow.com/a/4024263/2220152
+          #
+          verlte() {
+            [ "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
+          }
+          v=${{ inputs.k3s-version }}${{ inputs.k3s-channel }}
+          if ([[ "$v" != v* ]]) || ([[ "$v" == v1.22.* ]] && verlte "v1.22.10" "$v") || ([[ "$v" == v1.23.* ]] && verlte "v1.23.7" "$v") || (verlte "v1.24.1" "$v"); then
+            default_extra_setup_args=--egress-selector-mode=disabled
+          fi
         fi
         curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="${{ inputs.k3s-version }}" INSTALL_K3S_CHANNEL="${{ inputs.k3s-channel }}" sh -s - \
           ${k3s_disable_metrics} \
