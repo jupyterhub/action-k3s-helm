@@ -123,8 +123,8 @@ runs:
     #       `kubectl logs`.
     #
     #       For more details, see
-    #       https://github.com/jupyterhub/action-k3s-helm/issues/59 and its
-    #       linked issues.
+    #       https://github.com/k3s-io/k3s/issues/5633
+    #       and https://github.com/jupyterhub/action-k3s-helm/issues/59.
     #
     - name: Setup k3s ${{ inputs.k3s-version }}${{ inputs.k3s-channel }}
       run: |
