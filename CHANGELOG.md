@@ -1,5 +1,20 @@
 ## v3
 
+### v3.0.1 - 2022-09-12
+
+#### Bugs fixed
+
+- Workaround kubectl exec and kubectl logs issues with k3s [#64](https://github.com/jupyterhub/action-k3s-helm/pull/64) ([@consideRatio](https://github.com/consideRatio))
+
+#### Maintenance and upkeep improvements
+
+- Update cri-dockerd from 0.2.3 to 0.2.5 [#66](https://github.com/jupyterhub/action-k3s-helm/pull/66) ([@consideRatio](https://github.com/consideRatio))
+- Update cri-dockerd from 0.2.2 to 0.2.3 [#61](https://github.com/jupyterhub/action-k3s-helm/pull/61) ([@consideRatio](https://github.com/consideRatio))
+
+#### Documentation improvements
+
+- docs: fix readme example to use v3 [#60](https://github.com/jupyterhub/action-k3s-helm/pull/60) ([@consideRatio](https://github.com/consideRatio))
+
 ### v3.0.0 - 2022-06-13
 
 #### Breaking changes
