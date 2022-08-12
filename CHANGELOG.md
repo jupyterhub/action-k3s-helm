@@ -1,5 +1,11 @@
 ## v3
 
+### v3.0.2 - 2022-09-13
+
+#### Bugs fixed
+
+- Apply workaround added in 3.0.1 only when possible [#67](https://github.com/jupyterhub/action-k3s-helm/pull/67) ([@consideRatio](https://github.com/consideRatio))
+
 ### v3.0.1 - 2022-09-12
 
 #### Bugs fixed
