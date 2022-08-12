@@ -129,7 +129,6 @@ runs:
     - name: Setup k3s ${{ inputs.k3s-version }}${{ inputs.k3s-channel }}
       run: |
         echo "::group::Setup k3s ${{ inputs.k3s-version }}${{ inputs.k3s-channel }}"
-
         if [[ "${{ inputs.metrics-enabled }}" != true ]]; then
           k3s_disable_metrics="--disable metrics-server"
         fi
@@ -155,7 +154,12 @@ runs:
           verlte() {
             [ "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
           }
-          v=${{ inputs.k3s-version }}${{ inputs.k3s-channel }}
+          # If a k3s channel is specified we append a patch version of 99 to it
+          # to ensure our verlte comparisons below functions as intended.
+          #
+          c=${{ inputs.k3s-channel }}
+          c=${c:+$c.99}
+          v=${{ inputs.k3s-version }}${c}
           if ([[ "$v" != v* ]]) || ([[ "$v" == v1.22.* ]] && verlte "v1.22.10" "$v") || ([[ "$v" == v1.23.* ]] && verlte "v1.23.7" "$v") || (verlte "v1.24.1" "$v"); then
             default_extra_setup_args=--egress-selector-mode=disabled
           fi
