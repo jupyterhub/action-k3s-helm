@@ -239,20 +239,20 @@ runs:
     - name: Wait for calico, coredns, metrics server, traefik
       run: |
         echo "::group::Wait for daemonset/calico-node"
-        kubectl rollout status --watch --timeout 300s daemonset/calico-node -n kube-system
+        kubectl rollout status --watch --timeout 600s daemonset/calico-node -n kube-system
         echo "::endgroup::"
 
         echo "::group::Wait for deployment/calico-kube-controllers"
-        kubectl rollout status --watch --timeout 300s deployment/calico-kube-controllers -n kube-system
+        kubectl rollout status --watch --timeout 600s deployment/calico-kube-controllers -n kube-system
         echo "::endgroup::"
 
         echo "::group::Wait for deployment/coredns"
-        kubectl rollout status --watch --timeout 300s deployment/coredns -n kube-system
+        kubectl rollout status --watch --timeout 600s deployment/coredns -n kube-system
         echo "::endgroup::"
 
         echo "::group::Wait for deployment/metrics-server"
         if [[ "${{ inputs.metrics-enabled }}" == true ]]; then
-          kubectl rollout status --watch --timeout 300s deployment/metrics-server -n kube-system
+          kubectl rollout status --watch --timeout 600s deployment/metrics-server -n kube-system
         fi
         echo "::endgroup::"
 
@@ -261,9 +261,9 @@ runs:
           # NOTE: Different versions of k3s install traefik in different ways,
           #       by waiting for these jobs if they exist, we will be fine no
           #       matter what.
-          kubectl wait --for=condition=complete --timeout=300s job/helm-install-traefik-crd -n kube-system || true
-          kubectl wait --for=condition=complete --timeout=300s job/helm-install-traefik -n kube-system || true
-          kubectl rollout status --watch --timeout 300s deployment/traefik -n kube-system
+          kubectl wait --for=condition=complete --timeout=600s job/helm-install-traefik-crd -n kube-system || true
+          kubectl wait --for=condition=complete --timeout=600s job/helm-install-traefik -n kube-system || true
+          kubectl rollout status --watch --timeout 600s deployment/traefik -n kube-system
         fi
         echo "::endgroup::"
       shell: bash
