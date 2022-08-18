@@ -1,18 +1,24 @@
 ## v3
 
-### v3.0.3 - 2022-09-13
+### v3.0.4 - 2022-08-18
+
+#### Bugs fixed
+
+- fix: fail after 10 minutes (previously 5) as image pulling can take time [#71](https://github.com/jupyterhub/action-k3s-helm/pull/71) ([@consideRatio](https://github.com/consideRatio))
+
+### v3.0.3 - 2022-08-13
 
 #### Bugs fixed
 
 - Fix workaround added in 3.0.1 and adjusted in 3.0.2 [#69](https://github.com/jupyterhub/action-k3s-helm/pull/69) ([@consideRatio](https://github.com/consideRatio))
 
-### v3.0.2 - 2022-09-13
+### v3.0.2 - 2022-08-13
 
 #### Bugs fixed
 
 - Apply workaround added in 3.0.1 only when possible [#67](https://github.com/jupyterhub/action-k3s-helm/pull/67) ([@consideRatio](https://github.com/consideRatio))
 
-### v3.0.1 - 2022-09-12
+### v3.0.1 - 2022-08-12
 
 #### Bugs fixed
 
