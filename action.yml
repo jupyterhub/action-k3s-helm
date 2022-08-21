@@ -203,7 +203,7 @@ runs:
         if [[ "${{ inputs.k3s-version }}${{ inputs.k3s-channel }}" == v1.20* ]]; then
           curl -sfL --output /tmp/calico.yaml https://docs.projectcalico.org/v3.21/manifests/calico.yaml
         else
-          curl -sfL --output /tmp/calico.yaml https://projectcalico.docs.tigera.io/v3.23/manifests/calico.yaml
+          curl -sfL --output /tmp/calico.yaml https://raw.githubusercontent.com/projectcalico/calico/v3.24.0/manifests/calico.yaml
         fi
         cat /tmp/calico.yaml \
           | sed '/"type": "calico"/a\

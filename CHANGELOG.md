@@ -1,5 +1,11 @@
 ## v3
 
+### v3.0.5 - 2022-08-21
+
+#### Bugs fixed
+
+- Calico 3.24.0 (3.23 manifest URL is broken) [#73](https://github.com/jupyterhub/action-k3s-helm/pull/73) ([@manics](https://github.com/manics))
+
 ### v3.0.4 - 2022-08-18
 
 #### Bugs fixed
