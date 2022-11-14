@@ -228,11 +228,11 @@ runs:
       id: set-output
       run: |
         echo "::group::Set version output"
-        echo "::set-output name=kubeconfig::$HOME/.kube/config"
-        echo "::set-output name=k3s-version::$(k3s --version | sed 's/.*\(v[0-9][^ ]*\).*/\1/')"
-        echo "::set-output name=k8s-version::$(k3s --version | sed 's/.*\(v[0-9][^+]*\).*/\1/')"
-        echo "::set-output name=calico-version::$(cat /tmp/calico.yaml | grep --max-count=1 "calico/cni:v" | sed 's/.*calico\/cni:\(.*\)/\1/')"
-        echo "::set-output name=helm-version::$(helm version --short | sed 's/\([^+]*\).*/\1/')"
+        echo "kubeconfig=$HOME/.kube/config" >> $GITHUB_OUTPUT
+        echo "k3s-version=$(k3s --version | grep --max-count=1 'k3s' | sed 's/.*\(v[0-9][^ ]*\).*/\1/')" >> $GITHUB_OUTPUT
+        echo "k8s-version=$(k3s --version | grep --max-count=1 'k3s' | sed 's/.*\(v[0-9][^+]*\).*/\1/')" >> $GITHUB_OUTPUT
+        echo "calico-version=$(cat /tmp/calico.yaml | grep --max-count=1 'calico/cni:v' | sed 's/.*calico\/cni:\(.*\)/\1/')" >> $GITHUB_OUTPUT
+        echo "helm-version=$(helm version --short | sed 's/\([^+]*\).*/\1/')" >> $GITHUB_OUTPUT
         echo "::endgroup::"
       shell: bash
 
