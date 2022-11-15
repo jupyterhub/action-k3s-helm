@@ -97,7 +97,7 @@ runs:
     - name: Setup cri-dockerd as a dockershim
       if: inputs.docker-enabled == 'true'
       env:
-        CRI_DOCKERD_VERSION: "0.2.5"
+        CRI_DOCKERD_VERSION: "0.2.6"
       run: |
         cd /tmp
 
