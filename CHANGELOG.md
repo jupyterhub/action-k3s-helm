@@ -1,5 +1,17 @@
 ## v3
 
+### v3.0.6 - 2022-11-15
+
+#### Maintenance and upkeep improvements
+
+- Update calico from 3.24.0 to 3.24.5 [#81](https://github.com/jupyterhub/action-k3s-helm/pull/81) ([@consideRatio](https://github.com/consideRatio))
+- Update cri-dockerd from 0.2.5 to 0.2.6 [#80](https://github.com/jupyterhub/action-k3s-helm/pull/80) ([@consideRatio](https://github.com/consideRatio))
+- Fix deprecation of set-output [#79](https://github.com/jupyterhub/action-k3s-helm/pull/79) ([@consideRatio](https://github.com/consideRatio))
+
+#### Documentation improvements
+
+- Add RELEASE.md [#74](https://github.com/jupyterhub/action-k3s-helm/pull/74) ([@manics](https://github.com/manics))
+
 ### v3.0.5 - 2022-08-21
 
 #### Bugs fixed
