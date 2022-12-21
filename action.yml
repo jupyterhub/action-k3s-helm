@@ -97,8 +97,10 @@ runs:
     - name: Setup cri-dockerd as a dockershim
       if: inputs.docker-enabled == 'true'
       env:
-        CRI_DOCKERD_VERSION: "0.2.6"
+        # https://github.com/Mirantis/cri-dockerd/tags
+        CRI_DOCKERD_VERSION: "0.3.0"
       run: |
+        echo "::group::Setup cri-dockerd v${CRI_DOCKERD_VERSION} as a dockershim"
         cd /tmp
 
         wget -qO- https://github.com/Mirantis/cri-dockerd/releases/download/v${CRI_DOCKERD_VERSION}/cri-dockerd-${CRI_DOCKERD_VERSION}.amd64.tgz | tar -xvz --strip-components=1
@@ -115,6 +117,7 @@ runs:
         sudo systemctl daemon-reload
         sudo systemctl enable cri-docker.service
         sudo systemctl enable --now cri-docker.socket
+        echo "::endgroup::"
       shell: bash
 
     # NOTE: We apply a workaround as of version 3.0.1 by passing
