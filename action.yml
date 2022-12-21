@@ -267,3 +267,33 @@ runs:
         fi
         echo "::endgroup::"
       shell: bash
+
+    - name: Diagnose setup failure
+      if: failure()
+      run: |
+        echo "::group::Diagnose failure - systemctl status k3s.service"
+        systemctl status k3s.service || true
+        echo "::endgroup::"
+
+        echo "::group::Diagnose failure - journalctl -xu k3s.service"
+        journalctl --no-pager -xu k3s.service
+        echo "::endgroup::"
+
+        if [[ "${{ inputs.docker-enabled }}" == true ]]; then
+          echo "::group::Diagnose failure - systemctl status cri-docker.service"
+          systemctl status cri-docker.service || true
+          echo "::endgroup::"
+
+          echo "::group::Diagnose failure - journalctl -xu cri-docker.service"
+          journalctl --no-pager -xu cri-docker.service
+          echo "::endgroup::"
+
+          echo "::group::Diagnose failure - systemctl status cri-docker.socket"
+          systemctl status cri-docker.socket || true
+          echo "::endgroup::"
+
+          echo "::group::Diagnose failure - journalctl -xu cri-docker.socket"
+          journalctl --no-pager -xu cri-docker.socket
+          echo "::endgroup::"
+        fi
+      shell: bash
