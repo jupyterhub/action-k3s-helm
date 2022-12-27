@@ -100,8 +100,15 @@ runs:
         # https://github.com/Mirantis/cri-dockerd/tags
         CRI_DOCKERD_VERSION: "0.3.0"
       run: |
-        echo "::group::Setup cri-dockerd v${CRI_DOCKERD_VERSION} as a dockershim"
+        echo "::group::Setup cri-dockerd as a dockershim"
         cd /tmp
+
+        # Keep using cri-dockerd version 0.2.6 for versions 1.20-1.23 as 0.3.0+
+        # doesn't support them any more.
+        v=${{ inputs.k3s-version }}${{ inputs.k3s-channel }}
+        if [[ "$v" == v1.20* ]] || [[ "$v" == v1.21* ]] || [[ "$v" == v1.22* ]] || [[ "$v" == v1.23* ]]; then
+          CRI_DOCKERD_VERSION=0.2.6
+        fi
 
         wget -qO- https://github.com/Mirantis/cri-dockerd/releases/download/v${CRI_DOCKERD_VERSION}/cri-dockerd-${CRI_DOCKERD_VERSION}.amd64.tgz | tar -xvz --strip-components=1
         chmod +x cri-dockerd
