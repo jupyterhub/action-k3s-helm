@@ -104,6 +104,7 @@ runs:
         cd /tmp
 
         wget -qO- https://github.com/Mirantis/cri-dockerd/releases/download/v${CRI_DOCKERD_VERSION}/cri-dockerd-${CRI_DOCKERD_VERSION}.amd64.tgz | tar -xvz --strip-components=1
+        chmod +x cri-dockerd
         sudo mv cri-dockerd /usr/bin/
 
         wget -q https://raw.githubusercontent.com/Mirantis/cri-dockerd/v${CRI_DOCKERD_VERSION}/packaging/systemd/cri-docker.socket
