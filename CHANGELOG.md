@@ -1,5 +1,17 @@
 ## v3
 
+### v3.1.0 - 2022-12-27
+
+([full changelog](https://github.com/jupyterhub/action-k3s-helm/compare/v3.0.6...27003afd9a6740dcf6a93cdd071e52caa993c458))
+
+#### Enhancements made
+
+- Update cri-dockerd from 0.2.6 to 0.3.0 (only for k3s 1.24+) - now k3s 1.26 is supported [#86](https://github.com/jupyterhub/action-k3s-helm/pull/86) ([@consideRatio](https://github.com/consideRatio))
+
+#### Continuous integration improvements
+
+- build(deps): bump Actions-R-Us/actions-tagger from 2.0.2 to 2.0.3 [#83](https://github.com/jupyterhub/action-k3s-helm/pull/83) ([@dependabot](https://github.com/dependabot))
+
 ### v3.0.6 - 2022-11-15
 
 #### Maintenance and upkeep improvements
@@ -77,7 +89,7 @@
 - Fix some incorrect versions which were modified in v2 [#38](https://github.com/jupyterhub/action-k3s-helm/pull/38) ([@manics](https://github.com/manics))
 - Add changelog for 2.0.0 [#36](https://github.com/jupyterhub/action-k3s-helm/pull/36) ([@consideRatio](https://github.com/consideRatio))
 
-#### Continuous integration
+#### Continuous integration improvements
 
 - ci: test network policies in more situations [#52](https://github.com/jupyterhub/action-k3s-helm/pull/52) ([@consideRatio](https://github.com/consideRatio))
 - ci: test against k3s-channel=latest and use k8s-namespace-report [#50](https://github.com/jupyterhub/action-k3s-helm/pull/50) ([@consideRatio](https://github.com/consideRatio))
@@ -115,7 +127,7 @@ installed as an ingress controller via `traefik-enabled: false`.
 
 - Update README example [#35](https://github.com/jupyterhub/action-k3s-helm/pull/35) ([@consideRatio](https://github.com/consideRatio))
 
-#### Continuous integration
+#### Continuous integration improvements
 
 - ci: ensure actions-tagger has the permissions to update branches/tags [#28](https://github.com/jupyterhub/action-k3s-helm/pull/28) ([@consideRatio](https://github.com/consideRatio))
 - ci: emit a namespace report of kube-system on failure [#27](https://github.com/jupyterhub/action-k3s-helm/pull/27) ([@consideRatio](https://github.com/consideRatio))
