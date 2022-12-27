@@ -118,6 +118,8 @@ runs:
         sudo systemctl daemon-reload
         sudo systemctl enable cri-docker.service
         sudo systemctl enable --now cri-docker.socket
+
+        cri-dockerd --buildinfo
         echo "::endgroup::"
       shell: bash
 
