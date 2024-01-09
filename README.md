@@ -2,14 +2,14 @@
 
 [![GitHub Action badge](https://github.com/jupyterhub/action-k3s-helm/workflows/Test/badge.svg)](https://github.com/jupyterhub/action-k3s-helm/actions)
 
-Creates a Kubernetes cluster using [K3s](https://k3s.io/) (1.20+) with
-[Calico](https://www.projectcalico.org/) (3.24) for
+Creates a Kubernetes cluster using [K3s](https://k3s.io/) (1.24+) with
+[Calico](https://www.projectcalico.org/) (3.27.0) for
 [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
-enforcement, and installs [Helm 3](https://helm.sh/) (3.1+).
+enforcement, and installs [Helm 3](https://helm.sh/) (3.5+).
 
 ## Optional input parameters
 
-- `k3s-version` or `k3s-channel`: Specify a K3s [version](https://github.com/rancher/k3s/releases) or [release channel](https://update.k3s.io/v1-release/channels). Versions 1.20 and later are supported. Defaults to the stable channel.
+- `k3s-version` or `k3s-channel`: Specify a K3s [version](https://github.com/rancher/k3s/releases) or [release channel](https://update.k3s.io/v1-release/channels). Versions 1.24 and later are supported. Defaults to the stable channel.
 - `helm-version`: Specify a Helm [version](https://github.com/helm/helm/releases). Versions 3.1 and later are supported. Defaults to the latest version.
 - `metrics-enabled`: Enable or disable K3S metrics-server, `true` (default) or `false`.
 - `traefik-enabled`: Enable or disable K3S Traefik ingress, `true` (default) or `false`.
@@ -20,10 +20,10 @@ enforcement, and installs [Helm 3](https://helm.sh/) (3.1+).
 
 - `kubeconfig`: The absolute path to the kubeconfig file (`$HOME/.kube/config`).
   The `KUBECONFIG` environment variable is also set by this action but may be removed in a future breaking release.
-- `k3s-version`: Installed k3s version, such as v1.24.3+k3s1
-- `k8s-version`: Installed k8s version, such as v1.24.3
-- `calico-version`: Installed calico version, such as v3.24.0
-- `helm-version`: Installed helm version, such as v3.9.3
+- `k3s-version`: Installed k3s version, such as v1.29.0+k3s1
+- `k8s-version`: Installed k8s version, such as v1.29.0
+- `calico-version`: Installed calico version, such as v3.27.0
+- `helm-version`: Installed helm version, such as v3.13.0
 
 ## Example
 
@@ -37,7 +37,7 @@ on:
 
 jobs:
   k8s-test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       # GitHub Action reference: https://github.com/jupyterhub/action-k3s-helm
       - name: Start a local k8s cluster
@@ -48,8 +48,8 @@ jobs:
           # - k3s versions at https://github.com/k3s-io/k3s/tags
           # - helm versions at https://github.com/helm/helm/tags
           k3s-channel: latest
-          # k3s-version: v1.22.2+k3s1
-          # helm-version: v3.7.0
+          # k3s-version: v1.29.0+k3s1
+          # helm-version: v3.13.0
 
       - name: Verify function of k8s, kubectl, and helm
         run: |
