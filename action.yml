@@ -90,34 +90,6 @@ runs:
         echo "::endgroup::"
       shell: bash
 
-    # NOTE: The sed substitution operation is to run cri-dockerd in a way that
-    #       makes it work with calico as a CNI. This was based on
-    #       https://github.com/Mirantis/cri-dockerd/issues/42.
-    #
-    - name: Setup cri-dockerd as a dockershim
-      if: inputs.docker-enabled == 'true'
-      env:
-        # https://github.com/Mirantis/cri-dockerd/tags
-        CRI_DOCKERD_VERSION: "0.3.9"
-      run: |
-        echo "::group::Setup cri-dockerd as a dockershim"
-        cd /tmp
-
-        wget -qO- https://github.com/Mirantis/cri-dockerd/releases/download/v${CRI_DOCKERD_VERSION}/cri-dockerd-${CRI_DOCKERD_VERSION}.amd64.tgz | tar -xvz --strip-components=1
-        sudo mv cri-dockerd /usr/bin/
-
-        wget -q https://raw.githubusercontent.com/Mirantis/cri-dockerd/v${CRI_DOCKERD_VERSION}/packaging/systemd/cri-docker.service
-        wget -q https://raw.githubusercontent.com/Mirantis/cri-dockerd/v${CRI_DOCKERD_VERSION}/packaging/systemd/cri-docker.socket
-        sudo mv cri-docker.{service,socket} /etc/systemd/system/
-
-        sudo systemctl daemon-reload
-        sudo systemctl enable cri-docker.service
-        sudo systemctl enable --now cri-docker.socket
-
-        cri-dockerd --buildinfo
-        echo "::endgroup::"
-      shell: bash
-
     # NOTE: We apply a workaround as of version 3.0.1 by passing
     #       --egress-selector-mode=disabled by default as not doing so following
     #       modern versions of k3s has led to issues with `kubectl exec` and
@@ -137,7 +109,7 @@ runs:
           k3s_disable_traefik="--disable traefik"
         fi
         if [[ "${{ inputs.docker-enabled }}" == true ]]; then
-          k3s_docker=--container-runtime-endpoint=/run/cri-dockerd.sock
+          k3s_docker=--docker
         fi
         # We want to provide a new default value for the --egress-selector-mode
         # flag to avoid an intermittent issue possibly not fully resolved:
