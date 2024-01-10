@@ -104,17 +104,11 @@ runs:
         cd /tmp
 
         wget -qO- https://github.com/Mirantis/cri-dockerd/releases/download/v${CRI_DOCKERD_VERSION}/cri-dockerd-${CRI_DOCKERD_VERSION}.amd64.tgz | tar -xvz --strip-components=1
-        chmod +x cri-dockerd
         sudo mv cri-dockerd /usr/bin/
 
-        wget -q https://raw.githubusercontent.com/Mirantis/cri-dockerd/v${CRI_DOCKERD_VERSION}/packaging/systemd/cri-docker.socket
-        sudo mv cri-docker.socket /etc/systemd/system/
-
         wget -q https://raw.githubusercontent.com/Mirantis/cri-dockerd/v${CRI_DOCKERD_VERSION}/packaging/systemd/cri-docker.service
-        sed --in-place --expression \
-            's,--network-plugin=,--network-plugin=cni --cni-bin-dir=/opt/cni/bin --cni-cache-dir=/var/lib/cni/cache --cni-conf-dir=/etc/cni/net.d,' \
-            cri-docker.service
-        sudo mv cri-docker.service /etc/systemd/system/
+        wget -q https://raw.githubusercontent.com/Mirantis/cri-dockerd/v${CRI_DOCKERD_VERSION}/packaging/systemd/cri-docker.socket
+        sudo mv cri-docker.{service,socket} /etc/systemd/system/
 
         sudo systemctl daemon-reload
         sudo systemctl enable cri-docker.service
