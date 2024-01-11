@@ -2,14 +2,14 @@
 
 [![GitHub Action badge](https://github.com/jupyterhub/action-k3s-helm/workflows/Test/badge.svg)](https://github.com/jupyterhub/action-k3s-helm/actions)
 
-Creates a Kubernetes cluster using [K3s](https://k3s.io/) (1.20+) with
+Creates a Kubernetes cluster using [K3s](https://k3s.io/) (1.24+) with
 [Calico](https://www.projectcalico.org/) (3.24) for
 [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
 enforcement, and installs [Helm 3](https://helm.sh/) (3.5+).
 
 ## Optional input parameters
 
-- `k3s-version` or `k3s-channel`: Specify a K3s [version](https://github.com/rancher/k3s/releases) or [release channel](https://update.k3s.io/v1-release/channels). Versions 1.20 and later are supported. Defaults to the stable channel.
+- `k3s-version` or `k3s-channel`: Specify a K3s [version](https://github.com/rancher/k3s/releases) or [release channel](https://update.k3s.io/v1-release/channels). Versions 1.24 and later are supported. Defaults to the stable channel.
 - `helm-version`: Specify a Helm [version](https://github.com/helm/helm/releases). Versions 3.1 and later are supported. Defaults to the latest version.
 - `metrics-enabled`: Enable or disable K3S metrics-server, `true` (default) or `false`.
 - `traefik-enabled`: Enable or disable K3S Traefik ingress, `true` (default) or `false`.
@@ -20,10 +20,10 @@ enforcement, and installs [Helm 3](https://helm.sh/) (3.5+).
 
 - `kubeconfig`: The absolute path to the kubeconfig file (`$HOME/.kube/config`).
   The `KUBECONFIG` environment variable is also set by this action but may be removed in a future breaking release.
-- `k3s-version`: Installed k3s version, such as v1.24.3+k3s1
-- `k8s-version`: Installed k8s version, such as v1.24.3
-- `calico-version`: Installed calico version, such as v3.24.0
-- `helm-version`: Installed helm version, such as v3.9.3
+- `k3s-version`: Installed k3s version, such as v1.29.0+k3s1
+- `k8s-version`: Installed k8s version, such as v1.29.0
+- `calico-version`: Installed calico version, such as v3.27.0
+- `helm-version`: Installed helm version, such as v3.13.0
 
 ## Example
 
