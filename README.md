@@ -3,7 +3,7 @@
 [![GitHub Action badge](https://github.com/jupyterhub/action-k3s-helm/workflows/Test/badge.svg)](https://github.com/jupyterhub/action-k3s-helm/actions)
 
 Creates a Kubernetes cluster using [K3s](https://k3s.io/) (1.24+) with
-[Calico](https://www.projectcalico.org/) (3.24) for
+[Calico](https://www.projectcalico.org/) (3.27.0) for
 [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
 enforcement, and installs [Helm 3](https://helm.sh/) (3.5+).
 

@@ -191,7 +191,7 @@ runs:
     - name: Setup calico
       run: |
         echo "::group::Setup calico"
-        curl -sfL --output /tmp/calico.yaml https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/calico.yaml
+        curl -sfL --output /tmp/calico.yaml https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml
         cat /tmp/calico.yaml \
           | sed '/"type": "calico"/a\
             "container_settings": {\
