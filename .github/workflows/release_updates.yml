@@ -15,9 +15,6 @@ jobs:
       contents: write
     steps:
       # Action reference: https://github.com/Actions-R-Us/actions-tagger
-      # NOTE: We pin a version not to have the source code (.ts files), but the
-      #       compiled source code (.js files). This git hash is what v2.0.1
-      #       referenced 30 December 2020.
-      - uses: Actions-R-Us/actions-tagger@330ddfac760021349fef7ff62b372f2f691c20fb
+      - uses: Actions-R-Us/actions-tagger@v2
         with:
           token: "${{ github.token }}"
