@@ -37,7 +37,7 @@ on:
 
 jobs:
   k8s-test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       # GitHub Action reference: https://github.com/jupyterhub/action-k3s-helm
       - name: Start a local k8s cluster
@@ -48,8 +48,8 @@ jobs:
           # - k3s versions at https://github.com/k3s-io/k3s/tags
           # - helm versions at https://github.com/helm/helm/tags
           k3s-channel: latest
-          # k3s-version: v1.22.2+k3s1
-          # helm-version: v3.7.0
+          # k3s-version: v1.29.0+k3s1
+          # helm-version: v3.13.0
 
       - name: Verify function of k8s, kubectl, and helm
         run: |
