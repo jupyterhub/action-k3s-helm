@@ -98,7 +98,7 @@ runs:
       if: inputs.docker-enabled == 'true'
       env:
         # https://github.com/Mirantis/cri-dockerd/tags
-        CRI_DOCKERD_VERSION: "0.3.0"
+        CRI_DOCKERD_VERSION: "0.3.9"
       run: |
         echo "::group::Setup cri-dockerd as a dockershim"
         cd /tmp
