@@ -1,3 +1,43 @@
+## v4
+
+### v4.0.0 - 2024-01-12
+
+Version 4.0.0 drops support for installing k3s version 1.20 - 1.23, to keep testing against those versions don't yet upgrade to v4 of this action.
+
+#### Breaking Changes
+
+- Drop support for setting up k3s 1.20 to 1.23, now only 1.24+ [#105](https://github.com/jupyterhub/action-k3s-helm/pull/105) ([@consideRatio](https://github.com/consideRatio), [@manics](https://github.com/manics))
+
+#### Maintenance and upkeep improvements
+
+- Rely on k3s to provide cri-dockerd [#107](https://github.com/jupyterhub/action-k3s-helm/pull/107) ([@consideRatio](https://github.com/consideRatio), [@manics](https://github.com/manics))
+- Update calico from 3.24.5 to 3.27.0 and cri-dockerd from 0.3.0 to 0.3.9 [#106](https://github.com/jupyterhub/action-k3s-helm/pull/106) ([@consideRatio](https://github.com/consideRatio), [@manics](https://github.com/manics))
+- Drop support for setting up k3s 1.20 to 1.23, now only 1.24+ [#105](https://github.com/jupyterhub/action-k3s-helm/pull/105) ([@consideRatio](https://github.com/consideRatio), [@manics](https://github.com/manics))
+- dependabot: monthly updates of github actions [#92](https://github.com/jupyterhub/action-k3s-helm/pull/92) ([@consideRatio](https://github.com/consideRatio))
+- Add BSD-3 License [#96](https://github.com/jupyterhub/action-k3s-helm/pull/96) ([@consideRatio](https://github.com/consideRatio), [@minrk](https://github.com/minrk))
+
+#### Documentation improvements
+
+- docs: make helm 3.5 be documented as required [#104](https://github.com/jupyterhub/action-k3s-helm/pull/104) ([@consideRatio](https://github.com/consideRatio), [@manics](https://github.com/manics))
+- Add changelog for 3.1.0 [#88](https://github.com/jupyterhub/action-k3s-helm/pull/88) ([@consideRatio](https://github.com/consideRatio))
+
+#### Continuous integration improvements
+
+- ci: test with ubuntu:22.04 and relax pin of release action to v2 [#103](https://github.com/jupyterhub/action-k3s-helm/pull/103) ([@consideRatio](https://github.com/consideRatio), [@manics](https://github.com/manics))
+
+#### Other merged PRs
+
+See [full changelog](https://github.com/jupyterhub/action-k3s-helm/compare/v3.1.0...v4.0.0) for dependabot and pre-commit.ci updates.
+
+#### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/jupyterhub/action-k3s-helm/graphs/contributors?from=2022-12-27&to=2024-01-12&type=c))
+
+@consideRatio ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Faction-k3s-helm+involves%3AconsideRatio+updated%3A2022-12-27..2024-01-12&type=Issues)) | @manics ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Faction-k3s-helm+involves%3Amanics+updated%3A2022-12-27..2024-01-12&type=Issues)) | @minrk ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Faction-k3s-helm+involves%3Aminrk+updated%3A2022-12-27..2024-01-12&type=Issues))
+
 ## v3
 
 ### v3.1.0 - 2022-12-27
