@@ -4,7 +4,7 @@
 
 Version 4.0.0 drops support for installing k3s version 1.20 - 1.23, to keep testing against those versions don't yet upgrade to v4 of this action.
 
-#### API and Breaking Changes
+#### Breaking Changes
 
 - Drop support for setting up k3s 1.20 to 1.23, now only 1.24+ [#105](https://github.com/jupyterhub/action-k3s-helm/pull/105) ([@consideRatio](https://github.com/consideRatio), [@manics](https://github.com/manics))
 
