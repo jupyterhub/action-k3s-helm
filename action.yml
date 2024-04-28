@@ -154,6 +154,13 @@ runs:
     #
     # ref: https://rancher.com/docs/k3s/latest/en/installation/network-options/
     #
+    # With k3s 1.29 of recent versions, and calico v3.27.3, we have added
+    # DirectoryOrCreate to the hostPath volume to avoid
+    # https://github.com/jupyterhub/action-k3s-helm/issues/112. This is reported
+    # to calcio in https://github.com/projectcalico/calico/issues/8773, and
+    # could perhaps be closed if we bump to a calico version having resolve
+    # this.
+    #
     - name: Setup calico
       run: |
         echo "::group::Setup calico"
@@ -163,6 +170,12 @@ runs:
             "container_settings": {\
               "allow_ip_forwarding": true\
             },' \
+          | sed '/path: \/opt\/cni\/bin/a\
+                    type: DirectoryOrCreate' \
+          | sed '/path: \/var\/run\/calico/a\
+                    type: DirectoryOrCreate' \
+          | sed '/path: \/var\/lib\/calico/a\
+                    type: DirectoryOrCreate' \
           | kubectl apply -f -
         echo "::endgroup::"
       shell: bash
