@@ -1,5 +1,20 @@
 ## v4
 
+### v4.0.1 - 2024-04-28
+
+#### Bugs fixed
+
+- Workaround calcio not declaring DirectoryOrCreate on hostPath volumes [#113](https://github.com/jupyterhub/action-k3s-helm/pull/113) ([@consideRatio](https://github.com/consideRatio))
+
+#### Maintenance and upkeep improvements
+
+- Reduce system pod startup timeout from 10m to 5m [#115](https://github.com/jupyterhub/action-k3s-helm/pull/115) ([@consideRatio](https://github.com/consideRatio))
+- Update calico from 3.27.0 to 3.27.3 [#114](https://github.com/jupyterhub/action-k3s-helm/pull/114) ([@consideRatio](https://github.com/consideRatio))
+
+#### Other merged PRs
+
+See [full changelog](https://github.com/jupyterhub/action-k3s-helm/compare/v4.0.0...v4.0.1) for dependabot and pre-commit.ci updates.
+
 ### v4.0.0 - 2024-01-12
 
 Version 4.0.0 drops support for installing k3s version 1.20 - 1.23, to keep testing against those versions don't yet upgrade to v4 of this action.
