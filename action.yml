@@ -62,7 +62,7 @@ outputs:
     description: "Installed k8s version, such as v1.29.0"
     value: "${{ steps.set-output.outputs.k8s-version }}"
   calico-version:
-    description: "Installed calico version, such as v3.27.0"
+    description: "Installed calico version, such as v3.27.3"
     value: "${{ steps.set-output.outputs.calico-version }}"
   helm-version:
     description: "Installed helm version, such as v3.13.0"
@@ -157,7 +157,7 @@ runs:
     - name: Setup calico
       run: |
         echo "::group::Setup calico"
-        curl -sfL --output /tmp/calico.yaml https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml
+        curl -sfL --output /tmp/calico.yaml https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/calico.yaml
         cat /tmp/calico.yaml \
           | sed '/"type": "calico"/a\
             "container_settings": {\
