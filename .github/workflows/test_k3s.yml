@@ -25,6 +25,7 @@ jobs:
             metrics-enabled: "true"
             traefik-enabled: "true"
             docker-enabled: "false"
+            ip-mode: "default"
 
           - k3s-version: ""
             k3s-channel: latest
@@ -32,6 +33,7 @@ jobs:
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "true"
+            ip-mode: "default"
 
           - k3s-version: ""
             k3s-channel: latest
@@ -39,6 +41,7 @@ jobs:
             metrics-enabled: "true"
             traefik-enabled: "true"
             docker-enabled: "true"
+            ip-mode: "default"
 
           - k3s-version: ""
             k3s-channel: latest
@@ -46,6 +49,7 @@ jobs:
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
+            ip-mode: "default"
 
           - k3s-version: v1.24.7+k3s1
             k3s-channel: ""
@@ -53,6 +57,7 @@ jobs:
             metrics-enabled: "true"
             traefik-enabled: "true"
             docker-enabled: "false"
+            ip-mode: "default"
 
           - k3s-version: v1.24.7+k3s1
             k3s-channel: ""
@@ -60,6 +65,25 @@ jobs:
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "true"
+            ip-mode: "default"
+
+          # Test IPv6 and dual stack
+
+          - k3s-version: ""
+            k3s-channel: latest
+            helm-version: ""
+            metrics-enabled: "false"
+            traefik-enabled: "false"
+            docker-enabled: "false"
+            ip-mode: "ipv6"
+
+          - k3s-version: ""
+            k3s-channel: latest
+            helm-version: ""
+            metrics-enabled: "false"
+            traefik-enabled: "false"
+            docker-enabled: "false"
+            ip-mode: "dual"
 
     steps:
       - uses: actions/checkout@v4
@@ -73,6 +97,7 @@ jobs:
           metrics-enabled: ${{ matrix.metrics-enabled }}
           traefik-enabled: ${{ matrix.traefik-enabled }}
           docker-enabled: ${{ matrix.docker-enabled }}
+          ip-mode: ${{ matrix.ip-mode }}
 
       - name: Verify action's outputs and env
         run: |
@@ -177,6 +202,18 @@ jobs:
 
       - name: Run netpol enforcement test chart's tests
         run: helm test test-netpol-enforcement --logs
+
+      # https://kubernetes.io/docs/tasks/network/validate-dual-stack/#validate-pod-addressing
+      - name: Check pods have an IPv6 address
+        if: matrix.ip-mode == 'dual' || matrix.ip-mode == 'ipv6'
+        run: |
+          echo "::group::pod/check-ipv6"
+          kubectl run check-ipv6 --image=nginx
+          kubectl wait --for=condition=Ready pod/check-ipv6
+          kubectl get pod/check-ipv6 -o yaml
+          echo "::endgroup::"
+
+          kubectl get pod/check-ipv6 -o go-template --template='{{range .status.podIPs}}{{printf "%s\n" .ip}}{{end}}' | grep '[0-9a-f]:\S*:[0-9a-f]'
 
       # ref: https://github.com/jupyterhub/action-k8s-namespace-report
       - name: Kubernetes namespace report (kube-system)
