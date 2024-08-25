@@ -110,6 +110,11 @@ runs:
             exit 1
           fi
 
+          # Try forcibly setting an IP6 on the host
+          # https://github.com/projectcalico/calico/issues/6443#issuecomment-1203759890
+          sudo ip -6 addr add 2001:1001:1001:1001::1/64 dev eth0
+          NODE_IP6=2001:1001:1001:1001::1
+
           if [[ "${{ inputs.ip-mode }}" = "dual" ]]; then
             echo K3S_CLUSTER_CIDR="10.42.0.0/16,2001:cafe:42::/56"
             echo K3S_SERVICE_CIDR="10.43.0.0/16,2001:cafe:43::/112"
