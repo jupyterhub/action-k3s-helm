@@ -62,7 +62,7 @@ outputs:
     description: "Installed k8s version, such as v1.29.0"
     value: "${{ steps.set-output.outputs.k8s-version }}"
   calico-version:
-    description: "Installed calico version, such as v3.27.3"
+    description: "Installed calico version, such as v3.28.1"
     value: "${{ steps.set-output.outputs.calico-version }}"
   helm-version:
     description: "Installed helm version, such as v3.13.0"
@@ -146,37 +146,30 @@ runs:
       shell: bash
 
     # Install calico as a CNI to enforce our NetworkPolicies. Note that canal
-    # could do this job as well, but we failed to set it up in Travis CI.
-    #
-    # Below we download the calico.yaml Kubernetes manifest and insert a
-    # container_settings section just below the phrase '"type": "calico"' and
-    # then `kubectl apply` it.
+    # could do this job as well.
     #
     # ref: https://rancher.com/docs/k3s/latest/en/installation/network-options/
-    #
-    # With k3s 1.29 of recent versions, and calico v3.27.3, we have added
-    # DirectoryOrCreate to the hostPath volume to avoid
-    # https://github.com/jupyterhub/action-k3s-helm/issues/112. This is reported
-    # to calcio in https://github.com/projectcalico/calico/issues/8773, and
-    # could perhaps be closed if we bump to a calico version having resolve
-    # this.
     #
     - name: Setup calico
       run: |
         echo "::group::Setup calico"
-        curl -sfL --output /tmp/calico.yaml https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/calico.yaml
-        cat /tmp/calico.yaml \
-          | sed '/"type": "calico"/a\
-            "container_settings": {\
-              "allow_ip_forwarding": true\
-            },' \
-          | sed '/path: \/opt\/cni\/bin/a\
-                    type: DirectoryOrCreate' \
-          | sed '/path: \/var\/run\/calico/a\
-                    type: DirectoryOrCreate' \
-          | sed '/path: \/var\/lib\/calico/a\
-                    type: DirectoryOrCreate' \
-          | kubectl apply -f -
+        # Download calico.yaml k8s and split into separate manifests
+        curl -sfL --output /tmp/calico.yaml https://raw.githubusercontent.com/projectcalico/calico/v3.28.1/manifests/calico.yaml
+        mkdir calico
+        cd calico
+        yq -s '"\(.kind)-\(.metadata.name).yaml"' /tmp/calico.yaml
+
+        # Modify ConfigMap/calico-config: Look for `"type": "calico"` and add
+        # `"container_settings": ...` on the next line
+        sed -i.bak '/"type": "calico"/a\
+                  "container_settings": {"allow_ip_forwarding": true},'\
+          ConfigMap-calico-config.yaml
+
+        for f in *.yaml.bak; do
+          diff -u "$f" "${f%.bak}" || :
+        done
+
+        cat ./*.yaml | kubectl apply -f -
         echo "::endgroup::"
       shell: bash
 
