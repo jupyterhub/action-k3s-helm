@@ -46,6 +46,10 @@ inputs:
     description: Enable K3s to use the Docker daemon
     required: false
     default: "false"
+  ip-mode:
+    description: 'Switch between IPv4 and/or IPv6: "default", "dual" or "ipv6"'
+    required: false
+    default: default
   extra-setup-args:
     description: Addition arguments to be passed to the K3S setup script
     required: false
@@ -90,6 +94,50 @@ runs:
         echo "::endgroup::"
       shell: bash
 
+    # https://docs.k3s.io/networking/basic-network-options#dual-stack-ipv4--ipv6-networking
+    - name: Set IP mode variables
+      run: |
+        echo "::group::Setting IP variables"
+        if [[ "${{ inputs.ip-mode }}" != "default" ]]; then
+          NODE_IP4=$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)([^/]+)')
+          if [ -z "$NODE_IP4" ]; then
+            echo "Failed to get node IP4"
+            exit 1
+          fi
+          NODE_IP6=$(ip -6 addr show eth0 | grep -oP '(?<=inet6\s)([^/]+)')
+          if [ -z "$NODE_IP6" ]; then
+            echo "Failed to get node IP6"
+            exit 1
+          fi
+
+          # If the interface has a link-local address then
+          # try forcibly setting an IP6 on the host
+          # https://github.com/projectcalico/calico/issues/6443#issuecomment-1203759890
+          if [[ "$NODE_IP6" == fe80* ]]; then
+            echo "Link-local IPv6 found: $NODE_IP6, overriding"
+            sudo ip -6 addr add 2001:1001:1001:1001::1/64 dev eth0
+            NODE_IP6=2001:1001:1001:1001::1
+          fi
+
+          if [[ "${{ inputs.ip-mode }}" = "dual" ]]; then
+            echo K3S_CLUSTER_CIDR="10.42.0.0/16,2001:cafe:42::/56"
+            echo K3S_SERVICE_CIDR="10.43.0.0/16,2001:cafe:43::/112"
+            echo K3S_NODE_IP="${NODE_IP4},{NODE_IP6}"
+          elif [[ "${{ inputs.ip-mode }}" = "ipv6" ]]; then
+            echo K3S_CLUSTER_CIDR="2001:cafe:42::/56"
+            echo K3S_SERVICE_CIDR="2001:cafe:43::/112"
+            echo K3S_NODE_IP="${NODE_IP6}"
+          else
+            echo "Invalid ip-mode: ${{ inputs.ip-mode }}"
+            exit 1
+          fi
+        fi
+        echo "K3S_CLUSTER_CIDR=$K3S_CLUSTER_CIDR" >> $GITHUB_ENV
+        echo "K3S_SERVICE_CIDR=$K3S_SERVICE_CIDR" >> $GITHUB_ENV
+        echo "K3S_NODE_IP=$K3S_NODE_IP" >> $GITHUB_ENV
+        echo "::endgroup::"
+      shell: bash
+
     # NOTE: We apply a workaround as of version 3.0.1 by passing
     #       --egress-selector-mode=disabled by default as not doing so following
     #       modern versions of k3s has led to issues with `kubectl exec` and
@@ -121,12 +169,25 @@ runs:
         if [[ "${{ inputs.extra-setup-args }}" != *--egress-selector-mode* ]]; then
           default_extra_setup_args=--egress-selector-mode=disabled
         fi
+        if [[ -n "$K3S_CLUSTER_CIDR" ]]; then
+          k3s_cluster_cidr="--cluster-cidr=$K3S_CLUSTER_CIDR"
+        fi
+        if [[ -n "$K3S_SERVICE_CIDR" ]]; then
+          k3s_service_cidr="--service-cidr=$K3S_SERVICE_CIDR"
+        fi
+        if [[ -n "$K3S_NODE_IP" ]]; then
+          k3s_node_ip="--service-cidr=$K3S_NODE_IP"
+        fi
+
         curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="${{ inputs.k3s-version }}" INSTALL_K3S_CHANNEL="${{ inputs.k3s-channel }}" sh -s - \
           ${k3s_disable_metrics} \
           ${k3s_disable_traefik} \
           --disable-network-policy \
           --flannel-backend=none \
           ${k3s_docker} \
+          ${k3s_cluster_cidr} \
+          ${k3s_service_cidr} \
+          ${k3s_node_ip} \
           ${{ inputs.extra-setup-args }} \
           ${default_extra_setup_args}
         echo "::endgroup::"
@@ -150,6 +211,8 @@ runs:
     #
     # ref: https://rancher.com/docs/k3s/latest/en/installation/network-options/
     #
+    # IPv6: https://docs.tigera.io/calico/latest/networking/ipam/ipv6
+    #
     - name: Setup calico
       run: |
         echo "::group::Setup calico"
@@ -159,11 +222,36 @@ runs:
         cd calico
         yq -s '"\(.kind)-\(.metadata.name).yaml"' /tmp/calico.yaml
 
-        # Modify ConfigMap/calico-config: Look for `"type": "calico"` and add
+        # ConfigMap/calico-config: Look for `"type": "calico"` and add
         # `"container_settings": ...` on the next line
         sed -i.bak '/"type": "calico"/a\
                   "container_settings": {"allow_ip_forwarding": true},'\
           ConfigMap-calico-config.yaml
+
+        # Optionally configure IPv6
+        # https://docs.tigera.io/calico/latest/networking/ipam/ipv6
+        # ConfigMap/calico-config: Look for `"type": "calico-ipam"` and add
+        # additional properties
+        if [[ "${{ inputs.ip-mode }}" = "dual" ]]; then
+          sed -i '/"type": "calico-ipam"/a\
+                    , "assign_ipv4": "true", "assign_ipv6": "true"'\
+            ConfigMap-calico-config.yaml
+        fi
+        if [[ "${{ inputs.ip-mode }}" = "ipv6" ]]; then
+          sed -i '/"type": "calico-ipam"/a\
+                    , "assign_ipv4": "false", "assign_ipv6": "true"'\
+            ConfigMap-calico-config.yaml
+        fi
+
+        if [[ "${{ inputs.ip-mode }}" = "dual" || "${{ inputs.ip-mode }}" = "ipv6" ]]; then
+          # DaemonSet/calico-node: Modify and add environment variables
+          sed -i.bak -re '/- name: FELIX_IPV6SUPPORT/{n; s/"false"/"true"\n\
+                    - name: IP6\n\
+                      value: autodetect\n\
+                    - name: CALICO_IPV6POOL_CIDR\n\
+                      value: "2001:cafe:42::\/56"/}'\
+            DaemonSet-calico-node.yaml
+        fi
 
         for f in *.yaml.bak; do
           diff -u "$f" "${f%.bak}" || :
