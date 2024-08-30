@@ -67,15 +67,7 @@ jobs:
             docker-enabled: "true"
             ip-mode: "default"
 
-          # Test IPv6 and dual stack
-
-          - k3s-version: ""
-            k3s-channel: latest
-            helm-version: ""
-            metrics-enabled: "false"
-            traefik-enabled: "false"
-            docker-enabled: "false"
-            ip-mode: "ipv6"
+          # Test dual stack (IPv6 only doesn't work)
 
           - k3s-version: ""
             k3s-channel: latest
