@@ -110,10 +110,14 @@ runs:
             exit 1
           fi
 
-          # Try forcibly setting an IP6 on the host
+          # If the interface has a link-local address then
+          # try forcibly setting an IP6 on the host
           # https://github.com/projectcalico/calico/issues/6443#issuecomment-1203759890
-          sudo ip -6 addr add 2001:1001:1001:1001::1/64 dev eth0
-          NODE_IP6=2001:1001:1001:1001::1
+          if [[ "$NODE_IP6" == fe80* ]]; then
+            echo "Link-local IPv6 found: $NODE_IP6, overriding"
+            sudo ip -6 addr add 2001:1001:1001:1001::1/64 dev eth0
+            NODE_IP6=2001:1001:1001:1001::1
+          fi
 
           if [[ "${{ inputs.ip-mode }}" = "dual" ]]; then
             echo K3S_CLUSTER_CIDR="10.42.0.0/16,2001:cafe:42::/56"
