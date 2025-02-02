@@ -1,0 +1,28 @@
+---
+# Test egress CIDR policies: allow egress to private CIDRs (within cluster)
+# only. Pods labelled "egress-internal-only" should be able to connect to the
+# unprotected-webserver:80 service but not unprotected-webserver:81, nor
+# public internet webservers
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: egress-internal-only
+spec:
+  podSelector:
+    matchLabels:
+      test-name: egress-internal-only
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 10.0.0.0/8
+        - ipBlock:
+            cidr: 172.16.0.0/12
+        - ipBlock:
+            cidr: 192.168.0.0/16
+      ports:
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53
