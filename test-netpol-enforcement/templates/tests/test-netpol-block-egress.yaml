@@ -1,0 +1,104 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "test-egress-internal-80-allowed"
+  labels:
+    test-name: egress-internal-only
+  annotations:
+    helm.sh/hook: test-success
+spec:
+  restartPolicy: Never
+  containers:
+    - name: busybox
+      image: busybox
+      command:
+        - sh
+        - -c
+        - |
+          if ! wget -T5 unprotected-webserver:80; then
+              echo "FAIL: unprotected-webserver:80 not allowed, but should be"
+              exit 1
+          fi
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "test-egress-internal-81-blocked"
+  labels:
+    test-name: egress-internal-only
+  annotations:
+    helm.sh/hook: test-success
+spec:
+  restartPolicy: Never
+  containers:
+    - name: busybox
+      image: busybox
+      command:
+        - sh
+        - -c
+        - |
+          if wget -T5 unprotected-webserver81:81; then
+              echo "FAIL: unprotected-webserver81:81 allowed, but shouldn't be"
+              exit 1
+          fi
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "test-egress-external-80-blocked"
+  labels:
+    test-name: egress-internal-only
+  annotations:
+    helm.sh/hook: test-success
+spec:
+  restartPolicy: Never
+  containers:
+    - name: busybox
+      image: busybox
+      command:
+        - sh
+        - -c
+        - |
+          if ! nslookup www.jupyter.org; then
+              echo "FAIL: nslookup not allowed, but should be"
+              exit 1
+          fi
+          # Not a proper test since http is redirected to https
+          if wget -T5 www.jupyter.org; then
+              echo "FAIL: www.jupyter.org allowed, but shouldn't be"
+              exit 1
+          fi
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "test-egress-all-allowed"
+  labels:
+    test-name: no-matching-netpol
+  annotations:
+    helm.sh/hook: test-success
+spec:
+  restartPolicy: Never
+  containers:
+    - name: busybox
+      image: busybox
+      command:
+        - sh
+        - -c
+        - |
+          if ! wget -T5 unprotected-webserver:80 -O 1.html; then
+              echo "FAIL: unprotected-webserver:80 not allowed, but should be"
+              exit 1
+          fi
+          if ! wget -T5 unprotected-webserver81:81 -O 2.html; then
+              echo "FAIL: unprotected-webserver81:81 not allowed, but should be"
+              exit 1
+          fi
+          if ! wget -T5 www.jupyter.org -O 3.html; then
+              echo "FAIL: www.jupyter.org not allowed, but should be"
+              exit 1
+          fi
