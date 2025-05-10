@@ -46,6 +46,10 @@ inputs:
     description: Enable K3s to use the Docker daemon
     required: false
     default: "false"
+  registry-enabled:
+    description: Install a local registry with a self-signed certificate
+    required: false
+    default: "false"
   extra-setup-args:
     description: Addition arguments to be passed to the K3S setup script
     required: false
@@ -67,6 +71,9 @@ outputs:
   helm-version:
     description: "Installed helm version, such as v3.13.0"
     value: "${{ steps.set-output.outputs.helm-version }}"
+  registry-host:
+    description: "Local registry host:port"
+    value: "${{ steps.set-output.outputs.registry-host }}"
 
 runs:
   using: "composite"
@@ -87,6 +94,15 @@ runs:
           echo "k3s-version and k3s-channel must not be specified simultaneously!"
           exit 1
         fi
+        echo "::endgroup::"
+      shell: bash
+
+    # This should add the CA to the system store, so K3s should pick it up
+    - name: Setup self-signed CA
+      if: inputs.registry-enabled == 'true'
+      run: |
+        echo "::group::Create self-signed certificate"
+        ${{ github.action_path }}/addons/self-signed-ca.sh
         echo "::endgroup::"
       shell: bash
 
@@ -183,6 +199,19 @@ runs:
         echo "::endgroup::"
       shell: bash
 
+    - name: Setup local registry
+      if: inputs.registry-enabled == 'true'
+      run: |
+        echo "::group::Setup registry"
+        kubectl create ns registry
+        kubectl create secret tls registry-cert \
+          -n registry \
+          --cert=certs/registry.crt \
+          --key=certs/registry.key
+        kubectl apply -f ${{ github.action_path }}/addons/registry.yaml -n registry
+        echo "::endgroup::"
+      shell: bash
+
     - name: Set version output
       id: set-output
       run: |
@@ -192,7 +221,12 @@ runs:
         echo "k8s-version=$(k3s --version | grep --max-count=1 'k3s' | sed 's/.*\(v[0-9][^+]*\).*/\1/')" >> $GITHUB_OUTPUT
         echo "calico-version=$(cat /tmp/calico.yaml | grep --max-count=1 'calico/cni:v' | sed 's/.*calico\/cni:\(.*\)/\1/')" >> $GITHUB_OUTPUT
         echo "helm-version=$(helm version --short | sed 's/\([^+]*\).*/\1/')" >> $GITHUB_OUTPUT
-        echo "::endgroup::"
+
+        if [[ "${{ inputs.registry-enabled }}" == true ]]; then
+          echo "registry-host=$CERTIFICATE_IP:5000" >> $GITHUB_OUTPUT
+        else
+          echo "registry-host=" >> $GITHUB_OUTPUT
+        fi
       shell: bash
 
     - name: Wait for calico, coredns, metrics server, traefik
@@ -225,4 +259,10 @@ runs:
           kubectl rollout status --watch --timeout=5m deployment/traefik -n kube-system
         fi
         echo "::endgroup::"
+
+        if [[ "${{ inputs.registry-enabled }}" == true ]]; then
+          echo "::group::Wait for deployment/registry"
+          kubectl rollout status --watch --timeout=5m deployment/registry -n registry
+          echo "::endgroup::"
+        fi
       shell: bash

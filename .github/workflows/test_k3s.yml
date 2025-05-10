@@ -25,6 +25,7 @@ jobs:
             metrics-enabled: "true"
             traefik-enabled: "true"
             docker-enabled: "false"
+            registry-enabled: "true"
 
           - k3s-version: ""
             k3s-channel: latest
@@ -32,6 +33,7 @@ jobs:
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "true"
+            registry-enabled: "false"
 
           - k3s-version: ""
             k3s-channel: latest
@@ -39,6 +41,7 @@ jobs:
             metrics-enabled: "true"
             traefik-enabled: "true"
             docker-enabled: "true"
+            registry-enabled: "true"
 
           - k3s-version: ""
             k3s-channel: latest
@@ -46,6 +49,7 @@ jobs:
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "false"
+            registry-enabled: "false"
 
           - k3s-version: v1.24.7+k3s1
             k3s-channel: ""
@@ -53,6 +57,7 @@ jobs:
             metrics-enabled: "true"
             traefik-enabled: "true"
             docker-enabled: "false"
+            registry-enabled: "false"
 
           - k3s-version: v1.24.7+k3s1
             k3s-channel: ""
@@ -60,6 +65,7 @@ jobs:
             metrics-enabled: "false"
             traefik-enabled: "false"
             docker-enabled: "true"
+            registry-enabled: "false"
 
     steps:
       - uses: actions/checkout@v4
@@ -73,6 +79,7 @@ jobs:
           metrics-enabled: ${{ matrix.metrics-enabled }}
           traefik-enabled: ${{ matrix.traefik-enabled }}
           docker-enabled: ${{ matrix.docker-enabled }}
+          registry-enabled: ${{ matrix.registry-enabled }}
 
       - name: Verify action's outputs and env
         run: |
@@ -82,6 +89,7 @@ jobs:
           echo "k8s-version=${{ steps.k3s.outputs.k8s-version }}"
           echo "calico-version=${{ steps.k3s.outputs.calico-version }}"
           echo "helm-version=${{ steps.k3s.outputs.helm-version }}"
+          echo "registry-host=${{ steps.k3s.outputs.registry-host }}"
           echo "---"
 
           EXIT=0
@@ -178,6 +186,18 @@ jobs:
       - name: Run netpol enforcement test chart's tests
         run: helm test test-netpol-enforcement --logs
 
+      - name: Test registry
+        if: matrix.registry-enabled == 'true'
+        run: |
+          IMAGE="${{ steps.k3s.outputs.registry-host }}/nginx"
+          echo "IMAGE=$IMAGE"
+          docker pull nginx
+          docker tag nginx $IMAGE
+          docker push $IMAGE
+
+          sed "s%IMAGE%$IMAGE%" addons/registry-test.yaml | kubectl apply -f -
+          kubectl rollout status --watch --timeout=5m deployment/registry-test
+
       # ref: https://github.com/jupyterhub/action-k8s-namespace-report
       - name: Kubernetes namespace report (kube-system)
         uses: jupyterhub/action-k8s-namespace-report@v1
@@ -189,6 +209,8 @@ jobs:
             deploy/calico-kube-controllers
             deploy/metrics-server
             deploy/traefik
+            deployment/registry
+            deployment/registry-test
 
   # Provides a single status_all check that can be used in GitHub branch
   # protection rules instead of having to list each matrix job
