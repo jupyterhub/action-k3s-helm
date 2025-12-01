@@ -14,6 +14,7 @@ enforcement, and installs [Helm 3](https://helm.sh/) (3.5+).
 - `metrics-enabled`: Enable or disable K3S metrics-server, `true` (default) or `false`.
 - `traefik-enabled`: Enable or disable K3S Traefik ingress, `true` (default) or `false`.
 - `docker-enabled`: Enable K3s to use the Docker daemon, `true` or `false` (default).
+- `registry-enabled`: Install a local registry with a self-signed certificate authority, `true` or `false` (default). The certificate authority is installed to the host system, and left in `~/certs/` for further use.
 - `extra-setup-args`: Extra arguments passed unquoted to the K3s setup script, use this if you require advanced customisation.
 
 ## Outputs
@@ -24,6 +25,7 @@ enforcement, and installs [Helm 3](https://helm.sh/) (3.5+).
 - `k8s-version`: Installed k8s version, such as v1.29.0
 - `calico-version`: Installed calico version, such as v3.27.0
 - `helm-version`: Installed helm version, such as v3.13.0
+- `registry-host`: Local registry host and port if `registry-enabled`, such as `10.0.0.1:5000`
 
 ## Example
 

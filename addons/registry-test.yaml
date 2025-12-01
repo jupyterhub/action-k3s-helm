@@ -1,0 +1,19 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: registry-test
+  template:
+    metadata:
+      labels:
+        run: registry-test
+    spec:
+      containers:
+        - name: web
+          # Replace this with CERTIFICATE_IP:PORT/image to test the local registry
+          image: IMAGE

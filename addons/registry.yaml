@@ -1,0 +1,35 @@
+# No PVC since this is just for testing
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: registry
+  template:
+    metadata:
+      labels:
+        run: registry
+    spec:
+      containers:
+        - name: registry
+          image: registry:2
+          ports:
+            - containerPort: 5000
+              hostPort: 5000
+          env:
+            - name: REGISTRY_HTTP_TLS_CERTIFICATE
+              value: "/certs/tls.crt"
+            - name: REGISTRY_HTTP_TLS_KEY
+              value: "/certs/tls.key"
+          volumeMounts:
+            - name: registry-certs
+              mountPath: "/certs"
+              readOnly: true
+      volumes:
+        - name: registry-certs
+          secret:
+            secretName: registry-cert
