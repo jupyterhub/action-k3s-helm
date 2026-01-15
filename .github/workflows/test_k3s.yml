@@ -28,7 +28,7 @@ jobs:
 
           - k3s-version: ""
             k3s-channel: latest
-            helm-version: "4.0.5"
+            helm-version: "v4.0.5"
             metrics-enabled: "true"
             traefik-enabled: "true"
             docker-enabled: "false"

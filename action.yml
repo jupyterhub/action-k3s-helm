@@ -180,7 +180,7 @@ runs:
       run: |
         HELM_VERSION="${{ inputs.helm-version }}"
         echo "::group::Setup Helm ${HELM_VERSION}"
-        if [[ "${HELM_VERSION}" == 4* ]]; then
+        if [[ "${HELM_VERSION}" == v4* ]]; then
           HELM_INSTALL_SCRIPT=https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-4
         else
           HELM_INSTALL_SCRIPT=https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
