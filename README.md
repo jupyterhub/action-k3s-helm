@@ -5,7 +5,7 @@
 Creates a Kubernetes cluster using [K3s](https://k3s.io/) (1.24+) with
 [Calico](https://www.projectcalico.org/) (3.27.0) for
 [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
-enforcement, and installs [Helm 3](https://helm.sh/) (3.5+).
+enforcement, and installs [Helm 3/4](https://helm.sh/) (3.5+) (defaults to 3).
 
 ## Optional input parameters
 
@@ -23,7 +23,7 @@ enforcement, and installs [Helm 3](https://helm.sh/) (3.5+).
 - `k3s-version`: Installed k3s version, such as v1.29.0+k3s1
 - `k8s-version`: Installed k8s version, such as v1.29.0
 - `calico-version`: Installed calico version, such as v3.27.0
-- `helm-version`: Installed helm version, such as v3.13.0
+- `helm-version`: Installed helm version, such as v3.13.0 or v4.0.5. Defaults to latest v3.x
 
 ## Example
 
