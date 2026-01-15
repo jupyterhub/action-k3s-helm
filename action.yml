@@ -31,7 +31,7 @@ inputs:
     required: false
     default: ""
   helm-version:
-    description: Helm 3 version (https://github.com/helm/helm/releases)
+    description: Helm 3+ version (https://github.com/helm/helm/releases) (defaults to latest 3.x)
     required: false
     default: ""
   metrics-enabled:
@@ -178,8 +178,14 @@ runs:
     # install Helm at this point for example.
     - name: Setup Helm ${{ inputs.helm-version }}
       run: |
-        echo "::group::Setup Helm ${{ inputs.helm-version }}"
-        curl -sf https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="${{ inputs.helm-version }}" bash
+        HELM_VERSION="${{ inputs.helm-version }}"
+        echo "::group::Setup Helm ${HELM_VERSION}"
+        if [[ "${HELM_VERSION}" == 4* ]]; then
+          HELM_INSTALL_SCRIPT=https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-4
+        else
+          HELM_INSTALL_SCRIPT=https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+        fi
+        curl -sf ${HELM_INSTALL_SCRIPT} | DESIRED_VERSION="${HELM_VERSION}" bash
         echo "::endgroup::"
       shell: bash
 
