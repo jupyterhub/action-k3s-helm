@@ -1,6 +1,6 @@
 ## v4
 
-### v4.1.0 - 2026-03-14
+### v4.1.0 - 2026-03-13
 
 ([full changelog](https://github.com/jupyterhub/action-k3s-helm/compare/v4.0.1...v4.1.0))
 
