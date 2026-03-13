@@ -1,5 +1,37 @@
 ## v4
 
+### v4.1.0 - 2026-03-13
+
+([full changelog](https://github.com/jupyterhub/action-k3s-helm/compare/v4.0.1...v4.1.0))
+
+#### Enhancements made
+
+- Support using helm v4 [#126](https://github.com/jupyterhub/action-k3s-helm/pull/126) ([@yuvipanda](https://github.com/yuvipanda), [@manics](https://github.com/manics), [@minrk](https://github.com/minrk))
+
+#### Maintenance and upkeep improvements
+
+- Update Calico to 3.31.4 [#128](https://github.com/jupyterhub/action-k3s-helm/pull/128) ([@manics](https://github.com/manics))
+- test: nginx 1.27.3 [#119](https://github.com/jupyterhub/action-k3s-helm/pull/119) ([@manics](https://github.com/manics), [@consideRatio](https://github.com/consideRatio))
+- Calico v3.28.1 [#117](https://github.com/jupyterhub/action-k3s-helm/pull/117) ([@manics](https://github.com/manics), [@consideRatio](https://github.com/consideRatio))
+
+#### Continuous integration improvements
+
+- Update pre-commit, use rbubley/mirrors-prettier [#130](https://github.com/jupyterhub/action-k3s-helm/pull/130) ([@manics](https://github.com/manics))
+- Update CI to use ubuntu-24.04 [#129](https://github.com/jupyterhub/action-k3s-helm/pull/129) ([@manics](https://github.com/manics))
+- build(deps): bump actions/checkout from 5 to 6 [#125](https://github.com/jupyterhub/action-k3s-helm/pull/125) ([@consideRatio](https://github.com/consideRatio))
+- build(deps): bump actions/checkout from 4 to 5 [#124](https://github.com/jupyterhub/action-k3s-helm/pull/124) ([@consideRatio](https://github.com/consideRatio))
+- [pre-commit.ci] pre-commit autoupdate [#121](https://github.com/jupyterhub/action-k3s-helm/pull/121) ([@consideRatio](https://github.com/consideRatio))
+- Test egress policies [#120](https://github.com/jupyterhub/action-k3s-helm/pull/120) ([@manics](https://github.com/manics), [@consideRatio](https://github.com/consideRatio))
+
+#### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/jupyterhub/action-k3s-helm/graphs/contributors?from=2024-04-28&to=2026-03-13&type=c))
+
+@consideRatio ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Faction-k3s-helm+involves%3AconsideRatio+updated%3A2024-04-28..2026-03-13&type=Issues)) | @manics ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Faction-k3s-helm+involves%3Amanics+updated%3A2024-04-28..2026-03-13&type=Issues)) | @minrk ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Faction-k3s-helm+involves%3Aminrk+updated%3A2024-04-28..2026-03-13&type=Issues)) | @yuvipanda ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Faction-k3s-helm+involves%3Ayuvipanda+updated%3A2024-04-28..2026-03-13&type=Issues))
+
 ### v4.0.1 - 2024-04-28
 
 #### Bugs fixed
