@@ -11,7 +11,7 @@ spec:
   restartPolicy: Never
   containers:
     - name: busybox
-      image: busybox
+      image: docker.io/busybox:latest
       command:
         - sh
         - -c
@@ -34,7 +34,7 @@ spec:
   restartPolicy: Never
   containers:
     - name: busybox
-      image: busybox
+      image: docker.io/busybox:latest
       command:
         - sh
         - -c
@@ -57,7 +57,7 @@ spec:
   restartPolicy: Never
   containers:
     - name: busybox
-      image: busybox
+      image: docker.io/busybox:latest
       command:
         - sh
         - -c
@@ -85,7 +85,7 @@ spec:
   restartPolicy: Never
   containers:
     - name: busybox
-      image: busybox
+      image: docker.io/busybox:latest
       command:
         - sh
         - -c

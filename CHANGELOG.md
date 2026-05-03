@@ -1,3 +1,28 @@
+## Unreleased
+
+#### Breaking Changes
+
+- Add `cni-provider`, defaulting to `cilium`. This changes the default CNI from
+  the action's previous Calico-only behavior to Cilium.
+- Replace `docker-enabled` with `cri-runtime`; use `cri-runtime: docker` to
+  make k3s use the host Docker daemon through cri-dockerd.
+- Rename `metrics-enabled` to `resource-metrics-support`, and change the
+  default from `true` to `false`.
+- Rename `traefik-enabled` to `ingress-support`; Calico uses k3s Traefik and
+  Cilium uses Cilium Ingress. The default changes from `true` to `false`.
+- Add `loadbalancer-service-support`, defaulting to `false`; users must opt in
+  to support for Service resources of type `LoadBalancer`.
+- Add `gateway-api-support`, defaulting to `false`; this is only supported with
+  `cni-provider: cilium`.
+- Gateway API support installs the Gateway API 1.4.1 standard CRDs and the
+  experimental `TLSRoute` CRD required by Cilium 1.19.3.
+- Cilium Ingress and Gateway API use Cilium host-network mode when
+  `loadbalancer-service-support` is `false`.
+- Add Cilium support and a new `cilium-version` output. Existing
+  `calico-version` remains, and is empty when Cilium is selected.
+- With `cni-provider: cilium`, k3s kube-proxy is disabled and Cilium is
+  installed with kube-proxy replacement.
+
 ## v4
 
 ### v4.1.0 - 2026-03-13

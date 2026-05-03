@@ -19,54 +19,71 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - k3s-version: ""
+          - name: cilium-minimal
+            k3s-version: ""
+            k3s-channel: stable
+            helm-version: ""
+            cni-provider: cilium
+            cri-runtime: containerd
+            loadbalancer-service-support: "false"
+            gateway-api-support: "false"
+            ingress-support: "false"
+            resource-metrics-support: "false"
+
+          - name: cilium-maximal
+            k3s-version: ""
             k3s-channel: latest
             helm-version: ""
-            metrics-enabled: "true"
-            traefik-enabled: "true"
-            docker-enabled: "false"
+            cni-provider: cilium
+            cri-runtime: containerd
+            loadbalancer-service-support: "true"
+            gateway-api-support: "true"
+            ingress-support: "true"
+            resource-metrics-support: "true"
 
-          - k3s-version: ""
+          - name: cilium-maximal-oldest-k3s
+            k3s-version: v1.32.13+k3s1
+            k3s-channel: ""
+            helm-version: v3.5.0
+            cni-provider: calico
+            cri-runtime: docker
+            loadbalancer-service-support: "true"
+            gateway-api-support: "true"
+            ingress-support: "true"
+            resource-metrics-support: "true"
+
+          - name: calico-minimal
+            k3s-version: ""
+            k3s-channel: stable
+            helm-version: ""
+            cni-provider: calico
+            cri-runtime: containerd
+            loadbalancer-service-support: "false"
+            gateway-api-support: "false"
+            ingress-support: "false"
+            resource-metrics-support: "false"
+
+          - name: calico-maximal
+            k3s-version: ""
             k3s-channel: latest
             helm-version: "v4.0.5"
-            metrics-enabled: "true"
-            traefik-enabled: "true"
-            docker-enabled: "false"
+            cni-provider: calico
+            cri-runtime: docker
+            loadbalancer-service-support: "true"
+            gateway-api-support: "false"
+            ingress-support: "true"
+            resource-metrics-support: "true"
 
-          - k3s-version: ""
-            k3s-channel: latest
-            helm-version: ""
-            metrics-enabled: "false"
-            traefik-enabled: "false"
-            docker-enabled: "true"
-
-          - k3s-version: ""
-            k3s-channel: latest
-            helm-version: ""
-            metrics-enabled: "true"
-            traefik-enabled: "true"
-            docker-enabled: "true"
-
-          - k3s-version: ""
-            k3s-channel: latest
-            helm-version: ""
-            metrics-enabled: "false"
-            traefik-enabled: "false"
-            docker-enabled: "false"
-
-          - k3s-version: v1.24.7+k3s1
+          - name: calico-maximal-oldest-k3s
+            k3s-version: v1.32.13+k3s1
             k3s-channel: ""
             helm-version: v3.5.0
-            metrics-enabled: "true"
-            traefik-enabled: "true"
-            docker-enabled: "false"
-
-          - k3s-version: v1.24.7+k3s1
-            k3s-channel: ""
-            helm-version: v3.5.0
-            metrics-enabled: "false"
-            traefik-enabled: "false"
-            docker-enabled: "true"
+            cni-provider: calico
+            cri-runtime: docker
+            loadbalancer-service-support: "true"
+            gateway-api-support: "false"
+            ingress-support: "true"
+            resource-metrics-support: "true"
 
     steps:
       - uses: actions/checkout@v6
@@ -77,9 +94,12 @@ jobs:
           k3s-version: ${{ matrix.k3s-version }}
           k3s-channel: ${{ matrix.k3s-channel }}
           helm-version: ${{ matrix.helm-version }}
-          metrics-enabled: ${{ matrix.metrics-enabled }}
-          traefik-enabled: ${{ matrix.traefik-enabled }}
-          docker-enabled: ${{ matrix.docker-enabled }}
+          cni-provider: ${{ matrix.cni-provider }}
+          cri-runtime: ${{ matrix.cri-runtime }}
+          resource-metrics-support: ${{ matrix.resource-metrics-support }}
+          loadbalancer-service-support: ${{ matrix.loadbalancer-service-support }}
+          ingress-support: ${{ matrix.ingress-support }}
+          gateway-api-support: ${{ matrix.gateway-api-support }}
 
       - name: Verify action's outputs and env
         run: |
@@ -88,6 +108,7 @@ jobs:
           echo "k3s-version=${{ steps.k3s.outputs.k3s-version }}"
           echo "k8s-version=${{ steps.k3s.outputs.k8s-version }}"
           echo "calico-version=${{ steps.k3s.outputs.calico-version }}"
+          echo "cilium-version=${{ steps.k3s.outputs.cilium-version }}"
           echo "helm-version=${{ steps.k3s.outputs.helm-version }}"
           echo "---"
 
@@ -108,9 +129,25 @@ jobs:
               echo "k8s-version not set correctly as an action output"
               EXIT=1
           fi
-          if [[ "${{ steps.k3s.outputs.calico-version }}" != v* ]]; then
-              echo "calico-version not set correctly as an action output"
-              EXIT=1
+          if [[ "${{ matrix.cni-provider }}" == calico ]]; then
+              if [[ "${{ steps.k3s.outputs.calico-version }}" != v* ]]; then
+                  echo "calico-version not set correctly as an action output"
+                  EXIT=1
+              fi
+              if [[ -n "${{ steps.k3s.outputs.cilium-version }}" ]]; then
+                  echo "cilium-version should be empty when using calico"
+                  EXIT=1
+              fi
+          fi
+          if [[ "${{ matrix.cni-provider }}" == cilium ]]; then
+              if [[ -n "${{ steps.k3s.outputs.calico-version }}" ]]; then
+                  echo "calico-version should be empty when using cilium"
+                  EXIT=1
+              fi
+              if [[ "${{ steps.k3s.outputs.cilium-version }}" != v* ]]; then
+                  echo "cilium-version not set correctly as an action output"
+                  EXIT=1
+              fi
           fi
           if [[ "${{ steps.k3s.outputs.helm-version }}" != v* ]]; then
               echo "helm-version not set correctly as an action output"
@@ -124,6 +161,12 @@ jobs:
           kubectl version
           kubectl get storageclass
           kubectl get deploy,daemonset,pods --all-namespaces
+
+      - name: Information from cilium
+        if: matrix.cni-provider == 'cilium'
+        run: |
+          cilium version
+          cilium status
 
       - name: Information from docker
         run: |
@@ -140,30 +183,93 @@ jobs:
               exit 1
           fi
 
-      - name: Verify deploy/metrics-server based on metrics-enabled input
+      - name: Verify expected action setup
         run: |
-          kubectl get --namespace=kube-system deploy/metrics-server && enabled=true || enabled=false
-          if [[ "$enabled" != "${{ matrix.metrics-enabled }}" ]]; then
+          fail() {
+              echo "ERROR: $*"
+              exit 1
+          }
+
+          kubectl get --namespace=kube-system deploy/metrics-server > /dev/null 2>&1 && enabled=true || enabled=false
+          if [[ "$enabled" != "${{ matrix.resource-metrics-support }}" ]]; then
               echo "ERROR: deploy/metrics-server detected or not, which broke an assumption"
+              kubectl get --namespace=kube-system deploy/metrics-server || true
               exit 1
           fi
 
-      - name: Verify deploy/traefik based on traefik-enabled input
-        run: |
-          kubectl get --namespace=kube-system deploy/traefik && enabled=true || enabled=false
-          if [[ "$enabled" != "${{ matrix.traefik-enabled }}" ]]; then
+          kubectl get --namespace=kube-system deploy/traefik > /dev/null 2>&1 && enabled=true || enabled=false
+          if [[ "${{ matrix.cni-provider }}" == calico ]]; then
+              expected="${{ matrix.ingress-support }}"
+          else
+              expected=false
+          fi
+          if [[ "$enabled" != "$expected" ]]; then
               echo "ERROR: deploy/traefik detected or not, which broke an assumption"
+              kubectl get --namespace=kube-system deploy/traefik || true
               exit 1
           fi
 
-      # When using `docker-enabled: true` locally built images with docker
+          k3s_unit=$(sudo systemctl cat k3s | tr '\n' ' ')
+          if [[ "${{ matrix.loadbalancer-service-support }}" == true && "${{ matrix.cni-provider }}" == calico ]]; then
+              if grep -q -- "--disable.*servicelb" <<< "${k3s_unit}"; then
+                  sudo systemctl cat k3s
+                  fail "ServiceLB was disabled unexpectedly"
+              fi
+          else
+              if ! grep -q -- "--disable.*servicelb" <<< "${k3s_unit}"; then
+                  sudo systemctl cat k3s
+                  fail "ServiceLB was not disabled"
+              fi
+          fi
+
+          if [[ "${{ matrix.cni-provider }}" == calico ]]; then
+              if ! kubectl --namespace=kube-system get ds/calico-node > /dev/null 2>&1; then
+                  kubectl --namespace=kube-system get ds/calico-node || true
+                  fail "Calico node DaemonSet not detected"
+              fi
+              if ! kubectl --namespace=kube-system get deploy/calico-kube-controllers > /dev/null 2>&1; then
+                  kubectl --namespace=kube-system get deploy/calico-kube-controllers || true
+                  fail "Calico kube controllers Deployment not detected"
+              fi
+              if kubectl --namespace=kube-system get ds/cilium > /dev/null 2>&1; then
+                  kubectl --namespace=kube-system get ds/cilium
+                  fail "Cilium detected when using Calico"
+              fi
+          else
+              if ! kubectl --namespace=kube-system get ds/cilium > /dev/null 2>&1; then
+                  kubectl --namespace=kube-system get ds/cilium || true
+                  fail "Cilium DaemonSet not detected"
+              fi
+              if ! kubectl --namespace=kube-system get deploy/cilium-operator > /dev/null 2>&1; then
+                  kubectl --namespace=kube-system get deploy/cilium-operator || true
+                  fail "Cilium operator Deployment not detected"
+              fi
+              if kubectl --namespace=kube-system get ds/calico-node > /dev/null 2>&1; then
+                  kubectl --namespace=kube-system get ds/calico-node
+                  fail "Calico detected when using Cilium"
+              fi
+          fi
+
+          if [[ "${{ matrix.gateway-api-support }}" == true ]]; then
+              for crd in \
+                  gatewayclasses.gateway.networking.k8s.io \
+                  gateways.gateway.networking.k8s.io \
+                  httproutes.gateway.networking.k8s.io; do
+                  if ! kubectl get crd "${crd}" > /dev/null 2>&1; then
+                      kubectl get crd "${crd}" || true
+                      fail "Gateway API CRD ${crd} not detected"
+                  fi
+              done
+          fi
+
+      # When using `cri-runtime: docker` locally built images with docker
       # should be available without loading them for use by the k3s CRI.
       #
       - name: Verify local image is available for the k8s cluster
-        if: matrix.docker-enabled == 'true'
+        if: matrix.cri-runtime == 'docker'
         run: |
-          docker pull busybox:latest
-          docker tag busybox:latest jupyterhub/action-k3s-helm:available-locally
+          docker pull docker.io/busybox:latest
+          docker tag docker.io/busybox:latest jupyterhub/action-k3s-helm:available-locally
 
           cat <<EOF | kubectl apply -f -
           apiVersion: v1
@@ -179,11 +285,116 @@ jobs:
 
           kubectl wait pod image-available-locally --for condition=Ready --timeout=30s
 
-      - name: Install netpol enforcement test chart
-        run: helm install test-netpol-enforcement ./test-netpol-enforcement --wait
+      - name: Verify NetworkPolicy support
+        run: |
+          helm install test-netpol-enforcement ./test-netpol-enforcement --wait
+          helm test test-netpol-enforcement --logs
 
-      - name: Run netpol enforcement test chart's tests
-        run: helm test test-netpol-enforcement --logs
+      - name: Verify LoadBalancer Service support
+        if: matrix.loadbalancer-service-support == 'true'
+        run: |
+          curl_until_success() {
+              for _ in $(seq 1 60); do
+                  if output="$(curl --connect-timeout 2 --max-time 5 -fsS "$@" 2>&1)"; then
+                      echo "${output}"
+                      return 0
+                  fi
+                  sleep 2
+              done
+              echo "${output}"
+              return 1
+          }
+
+          helm install test-loadbalancer-service-support ./test-loadbalancer-service-support --wait
+          kubectl rollout status --watch deploy/loadbalancer-service-smoke
+          kubectl get svc/loadbalancer-service-smoke
+
+          if [[ "${{ matrix.cni-provider }}" == calico ]]; then
+              node_ip="$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')"
+              test_url="http://${node_ip}:8081"
+          else
+              lb_ip="$(kubectl get svc/loadbalancer-service-smoke -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+              test_url="http://${lb_ip}:8081"
+          fi
+
+          curl_until_success "${test_url}"
+
+      - name: Verify Gateway API support
+        if: matrix.gateway-api-support == 'true'
+        run: |
+          report_gateway_api_resources() {
+              kubectl get gateway/gateway-smoke -o yaml || true
+              kubectl get httproute/gateway-smoke -o yaml || true
+              kubectl get gatewayclass cilium -o yaml || true
+              kubectl get svc cilium-gateway-gateway-smoke -o yaml || true
+              kubectl logs --all-containers -n kube-system deploy/cilium-operator || true
+          }
+
+          trap 'status=$?; if [[ "${status}" != 0 ]]; then report_gateway_api_resources; fi; exit "${status}"' EXIT
+
+          helm_install_args=()
+          if [[ "${{ matrix.loadbalancer-service-support }}" != true ]]; then
+              node_ip="$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')"
+              helm_install_args+=(--set "test.url=http://${node_ip}:8080")
+          fi
+          helm install test-gateway-api ./test-gateway-api "${helm_install_args[@]}"
+          kubectl rollout status --watch deploy/gateway-smoke
+          kubectl wait gateway/gateway-smoke --for=condition=Accepted
+          kubectl get gateway/gateway-smoke
+          kubectl get httproute/gateway-smoke
+          kubectl get gatewayclass cilium
+          if [[ "${{ matrix.loadbalancer-service-support }}" == true ]]; then
+              kubectl get svc cilium-gateway-gateway-smoke
+          fi
+          helm test test-gateway-api --logs
+
+      - name: Verify Ingress support
+        if: matrix.ingress-support == 'true'
+        run: |
+          curl_until_success() {
+              for _ in $(seq 1 60); do
+                  if output="$(curl --connect-timeout 2 --max-time 5 -fsS "$@" 2>&1)"; then
+                      echo "${output}"
+                      return 0
+                  fi
+                  sleep 2
+              done
+              echo "${output}"
+              return 1
+          }
+
+          helm install test-ingress-support ./test-ingress-support --wait
+          kubectl rollout status --watch deploy/ingress-smoke
+          kubectl get ingress/ingress-smoke
+          if [[ "${{ matrix.cni-provider }}" == calico ]]; then
+              kubectl run test-ingress-support \
+                  --image=docker.io/curlimages/curl:latest \
+                  --restart=Never \
+                  --attach \
+                  --rm \
+                  --command -- curl -fsS -H "Host: ingress-smoke.local" \
+                      http://traefik.kube-system.svc.cluster.local
+          elif [[ "${{ matrix.loadbalancer-service-support }}" == true ]]; then
+              kubectl get svc/cilium-ingress --namespace=kube-system
+              lb_ip="$(kubectl get svc/cilium-ingress --namespace=kube-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+              curl_until_success -H "Host: ingress-smoke.local" "http://${lb_ip}"
+          else
+              node_ip="$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')"
+              curl_until_success -H "Host: ingress-smoke.local" "http://${node_ip}:8082"
+          fi
+
+      - name: Verify resource metrics support
+        if: matrix.resource-metrics-support == 'true'
+        run: |
+          for _ in $(seq 1 24); do
+              if kubectl top nodes; then
+                  kubectl top pods --all-namespaces
+                  exit 0
+              fi
+              sleep 5
+          done
+          echo "Timed out waiting for resource metrics"
+          exit 1
 
       # ref: https://github.com/jupyterhub/action-k8s-namespace-report
       - name: Kubernetes namespace report (kube-system)
@@ -194,6 +405,8 @@ jobs:
           important-workloads: >
             ds/calico-node
             deploy/calico-kube-controllers
+            ds/cilium
+            deploy/cilium-operator
             deploy/metrics-server
             deploy/traefik
 

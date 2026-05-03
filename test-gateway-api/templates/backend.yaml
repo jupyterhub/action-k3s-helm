@@ -2,16 +2,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: protected-webserver
+  name: gateway-smoke
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: protected-webserver
+      app.kubernetes.io/name: gateway-smoke
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: protected-webserver
+        app.kubernetes.io/name: gateway-smoke
     spec:
       containers:
         - name: nginx
@@ -28,11 +28,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: protected-webserver
+  name: gateway-smoke
 spec:
-  type: ClusterIP
   selector:
-    app.kubernetes.io/name: protected-webserver
+    app.kubernetes.io/name: gateway-smoke
   ports:
     - port: 80
       targetPort: http
