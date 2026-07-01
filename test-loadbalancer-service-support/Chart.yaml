@@ -1,0 +1,4 @@
+apiVersion: v2
+name: test-loadbalancer-service-support
+description: Test chart for verifying Kubernetes LoadBalancer Service support.
+version: 0.1.0

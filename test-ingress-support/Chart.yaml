@@ -1,0 +1,4 @@
+apiVersion: v2
+name: test-ingress-support
+description: Test chart for verifying Kubernetes Ingress support.
+version: 0.1.0

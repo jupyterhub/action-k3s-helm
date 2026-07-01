@@ -1,0 +1,19 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-smoke
+  annotations:
+    ingress.cilium.io/host-listener-port: "8082"
+spec:
+  rules:
+    - host: ingress-smoke.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ingress-smoke
+                port:
+                  number: 80

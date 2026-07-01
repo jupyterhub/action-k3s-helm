@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-gateway-api
+  annotations:
+    helm.sh/hook: test-success
+spec:
+  restartPolicy: Never
+  containers:
+    - name: curl
+      image: docker.io/curlimages/curl:latest
+      command:
+        - sh
+        - -c
+        - |
+          for i in $(seq 1 60); do
+              if curl -fsS -H "Host: gateway-smoke.local" {{ required "test.url is required" .Values.test.url | quote }}; then
+                  exit 0
+              fi
+              sleep 2
+          done
+          exit 1

@@ -21,7 +21,7 @@ jobs:
           # - k3s versions at https://github.com/k3s-io/k3s/tags
           # - helm versions at https://github.com/helm/helm/tags
           k3s-channel: latest
-          # k3s-version: v1.29.0+k3s1
+          # k3s-version: v1.32.13+k3s1
           # helm-version: v3.13.0
 
       - name: Verify function of k8s, kubectl, and helm
